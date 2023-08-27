@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("org.mur.kapsitiles", appContext.getPackageName());
+        assertEquals("org.tmar.tmap", appContext.getPackageName());
     }
 }
