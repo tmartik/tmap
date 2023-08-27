@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar.TranslucentDecor"
+        android:name=".MapApplication"
         >
         <activity android:name="org.tmar.tmap.activity.FileMapActivity"
             android:label="@string/offlineMapName"
