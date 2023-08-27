@@ -21,9 +21,16 @@ public class FileTileReader implements ITileReader
     public InputStream getTile(int z, int x, int y) {
 
         final String fileName =  mPath + File.separator + z + File.separator + x + File.separator + y;
-        File tile = new File(fileName + ".png");
+
+        File tile = new File(fileName);
+        if(!tile.exists()) {
+            tile = new File(fileName + ".png");
+        }
         if(!tile.exists()) {
             tile = new File(fileName + ".jpg");
+        }
+        if(!tile.exists()) {
+            return null;
         }
 
         try {
