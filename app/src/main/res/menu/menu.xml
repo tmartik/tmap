@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/follow"
+        android:title="Follow" />
+    <item android:id="@+id/openMap"
+        android:title="Select layer">
+        <menu>
+            <item
+                android:title="Layer">
+
+            </item>
+        </menu>
+    </item>
+
+    <item android:id="@+id/openFile"
+        android:title="Open File" />
+
+    <!--
+    <item android:id="@+id/openMapFile"
+        android:title="Open Folder" />
+        -->
+</menu>

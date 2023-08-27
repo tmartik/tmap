@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TMap</string>
+    <string name="offlineMapName">Offline Maps</string>
+    <string name="noArchivesFound">No map archives found!</string>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TMap</string>
+    <string name="offlineMapName">Offline-kartat</string>
+    <string name="noArchivesFound">Karttatiedostoja ei löydy!</string>
+</resources>
