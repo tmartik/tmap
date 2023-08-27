@@ -2,7 +2,7 @@
 
 It is based on:
 - osmdroid (https://github.com/osmdroid/osmdroid)
-- GPXParse (https://sourceforge.net/projects/gpxparser/)
+- GPXParser (https://sourceforge.net/projects/gpxparser/)
 
 Currently implemented features:
 - Browse multiple offline maps
