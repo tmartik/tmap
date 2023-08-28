@@ -7,7 +7,7 @@ import java.io.InputStream;
  */
 public interface ITileReader {
     /*
-        Returns an input stream for the giben map tile. The caller will close the stream.
+        Returns an input stream for the given map tile. The caller will close the stream.
      */
     public InputStream getTile(int z, int x, int y);
 }

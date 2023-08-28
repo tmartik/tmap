@@ -123,7 +123,7 @@ public class FileMapActivity extends BaseActivity {
      */
     private void selectArchive(int index) {
         File mapFile = mMapDirs.get(index);
-        OfflineTileProvider tileProvider = new OfflineTileProvider(this, new SimpleRegisterReceiver(this), mapFile);
+        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), mapFile);
         mMapView.setTileProvider(tileProvider);
 
         IArchiveFile archives = tileProvider.getArchives();

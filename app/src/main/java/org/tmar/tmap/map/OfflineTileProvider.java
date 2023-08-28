@@ -22,7 +22,7 @@ public class OfflineTileProvider extends MapTileProviderArray implements IMapTil
 
     private IArchiveFile archive;
 
-    public OfflineTileProvider(Context c, final IRegisterReceiver pRegisterReceiver, File mapSpec) {
+    public OfflineTileProvider(final IRegisterReceiver pRegisterReceiver, File mapSpec) {
         super(getSource("dummy"), pRegisterReceiver);
 
         try {
