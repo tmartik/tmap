@@ -1,23 +1,21 @@
 package org.tmar.tmap.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.widget.Toast;
 
-import org.tmar.tmap.R;
-import org.tmar.tmap.map.OfflineTileProvider;
-import org.tmar.tmap.map.zip.ZipCache;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.tmar.tmap.MapApplication;
+import org.tmar.tmap.R;
+import org.tmar.tmap.map.OfflineTileProvider;
+import org.tmar.tmap.map.zip.ZipCache;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +25,7 @@ import java.util.Set;
  */
 public class FileMapActivity extends BaseActivity {
 
-    final static String mapSpecJson = "mapspec.json";       // Map archive specification filename
-    private List<File> mapDirs;                             // Available map archives
+    private List<File> mMapDirs;                             // Available map archives
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +65,12 @@ public class FileMapActivity extends BaseActivity {
     @Override
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Build layer selection menu
-        if (mapDirs != null && mapDirs.size() > 0) {
+        if (mMapDirs != null && mMapDirs.size() > 0) {
             int itemId = 100;
 
-            for (File m : mapDirs) {
-                String layerName = m.getName();
+            for (File m : mMapDirs) {
+                File parent = m.getParentFile();
+                String layerName = parent.getName();
                 subMenu.add(Menu.NONE, itemId++, Menu.NONE, layerName);
             }
         }
@@ -103,12 +101,13 @@ public class FileMapActivity extends BaseActivity {
         Determine the map archive to open for viewing.
      */
     private void openDefaultMap() {
-        mapDirs = getMapDirs(this);
+        MapApplication app = (MapApplication) getApplication();
+        mMapDirs = app.getMapDirs();
 
-        if(mapDirs.size() > 0) {
+        if(mMapDirs.size() > 0) {
             final String archiveName = mPref.getString("archiveName","");
-            for (int i = 0; i < mapDirs.size(); i++) {
-                File dir = mapDirs.get(i);
+            for (int i = 0; i < mMapDirs.size(); i++) {
+                File dir = mMapDirs.get(i);
                 if(dir.getAbsolutePath().indexOf(archiveName) >= 0 || archiveName.length() == 0) {
                     selectArchive(i);
                     break;
@@ -123,7 +122,7 @@ public class FileMapActivity extends BaseActivity {
         Set map archive for viewing.
      */
     private void selectArchive(int index) {
-        File mapFile = new File(mapDirs.get(index) + File.separator + mapSpecJson);
+        File mapFile = mMapDirs.get(index);
         OfflineTileProvider tileProvider = new OfflineTileProvider(this, new SimpleRegisterReceiver(this), mapFile);
         mMapView.setTileProvider(tileProvider);
 
@@ -134,52 +133,8 @@ public class FileMapActivity extends BaseActivity {
         ZipCache.clear();
 
         // Save to settings
-        File dir = mapDirs.get(index);
-        String[] parts = dir.getAbsolutePath().split("/");
-        mPref.edit().putString("archiveName", parts.length > 0 ? parts[parts.length - 1] : "").commit();
-    }
-
-    /*
-        Find map archives from storage.
-     */
-    private List<File> getMapDirs(Context c) {
-        List<File> searchDirs = new ArrayList<>();
-        searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
-        searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS));
-
-        File[] mediaDirs = c.getExternalMediaDirs();
-
-        for (File f : mediaDirs) {
-            File x = new File(f.getAbsolutePath());
-            while(x.getParentFile() != null) {
-                searchDirs.add(x);
-                x = x.getParentFile();
-            }
-        }
-
-        // Add proprietary data dirs
-        List<File> copy = new ArrayList<>(searchDirs);
-        for (File f : copy) {
-            searchDirs.add(new File(f.getAbsolutePath() + File.separator + "offline-maps"));
-        }
-
-        List<File> mapDirs = new ArrayList<>();
-
-        // Search dirs for maps
-        for (File d : searchDirs) {
-            File[] fileList = d.listFiles();
-            if(fileList != null) {
-                for (File f : fileList) {
-                    if(f.isDirectory()) {
-                        File mapSpecFile = new File(f.getAbsolutePath() + File.separator + mapSpecJson);
-                        if(mapSpecFile.exists()) {
-                            mapDirs.add(f);
-                        }
-                    }
-                }
-            }
-        }
-
-        return mapDirs;
+        File parent = mapFile.getParentFile();
+        String name = parent.getName();
+        mPref.edit().putString("archiveName", name).commit();
     }
 }
