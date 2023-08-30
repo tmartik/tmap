@@ -385,16 +385,18 @@ public class BaseActivity extends Activity {
         }
     }
 
-    protected String replaceUrls(String text) {         // TODO: does not work with multiple URLS in the input!
+    protected String replaceUrls(String text) {
+        String result = text;
+
         Pattern p = Pattern.compile("https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)");
         Matcher m = p.matcher(text);
         while(m.find()) {
             String url = m.group();
             String linkTag = "<A href=\"" + url + "\">" + url + "</A>";
-            text = m.replaceFirst(linkTag);
-            //m = p.matcher(text);
+            result = result.replace(url, linkTag);
         }
-        return text;
+
+        return result;
     }
 
     protected String replaceLineFeeds(String text) {
