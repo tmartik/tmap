@@ -2,4 +2,5 @@
     <string name="app_name">TMap</string>
     <string name="offlineMapName">Offline Maps</string>
     <string name="noArchivesFound">No map archives found!</string>
+    <string name="cannotOpenFile">Cannot open file!</string>
 </resources>

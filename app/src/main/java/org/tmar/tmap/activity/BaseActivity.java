@@ -249,7 +249,11 @@ public class BaseActivity extends Activity {
                     try {
                         // Open file and draw contents on the map
                         GPX gpx = openFile(data.getData());
-                        drawGpx(gpx);
+                        if(gpx != null) {
+                            drawGpx(gpx);
+                        } else {
+                            Toast.makeText(this, getString(R.string.cannotOpenFile), Toast.LENGTH_LONG).show();
+                        }
                     } catch (IOException e) {
                         e.printStackTrace();
                         Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
@@ -323,7 +327,7 @@ public class BaseActivity extends Activity {
         // Read from file
         FileParserResolver resolver = new FileParserResolver(this);
         IFileParser parser = resolver.resolve(fileUri);
-        return parser.parse(fileUri);
+        return parser != null ? parser.parse(fileUri) : null;
     }
 
     /*
