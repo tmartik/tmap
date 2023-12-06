@@ -271,18 +271,6 @@ public class BaseActivity extends Activity {
                         } else {
                             Toast.makeText(this, getString(R.string.cannotOpenFile), Toast.LENGTH_LONG).show();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-                    } catch (SAXException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
