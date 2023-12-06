@@ -2,7 +2,7 @@ package org.tmar.tmap;
 
 import android.app.Application;
 import android.os.Environment;
-import android.support.annotation.RawRes;
+import androidx.annotation.RawRes;
 import android.util.Log;
 import android.widget.Toast;
 
