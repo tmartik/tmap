@@ -436,7 +436,8 @@ public class BaseActivity extends Activity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         Iterator<String> iter = preferences.getAll().keySet().iterator();
-        for (String key = iter.next(); iter.hasNext(); key = iter.next()) {
+        while (iter.hasNext()) {
+            String key = iter.next();
             sharedPreferenceChangeListener.onSharedPreferenceChanged(preferences, key);
         }
     }
