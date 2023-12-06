@@ -14,10 +14,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.preference.PreferenceManager;
 
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -448,6 +450,9 @@ public class BaseActivity extends Activity {
                 String orientation = sharedPreferences.getString(key, "-1");
                 setOrientation(Integer.parseInt(orientation));
                 break;
+            case "fullscreen":
+                setFullscreen(sharedPreferences.getBoolean(key, false));
+                break;
         }
     };
 
@@ -461,5 +466,17 @@ public class BaseActivity extends Activity {
 
     private void setOrientation(int orientation) {
         setRequestedOrientation(orientation);
+    }
+
+    private void setFullscreen(boolean enabled) {
+        WindowInsetsControllerCompat windowInsetsController = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+        if(enabled) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
+        }
     }
 }

@@ -6,6 +6,10 @@
         app:title="@string/keepScreenOn"
         app:summary="@string/keepScreenOnSummary"/>
 
+    <SwitchPreferenceCompat
+        app:key="fullscreen"
+        app:title="@string/fullscreen"/>
+
     <ListPreference
         app:title="@string/orientation"
         app:key="orientation"

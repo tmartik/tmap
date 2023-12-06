@@ -10,4 +10,5 @@
     <string name="orientationNone">Unlocked</string>
     <string name="orientationPortrait">Portrait</string>
     <string name="orientationLandscape">Landscape</string>
+    <string name="fullscreen">Show fullscreen</string>
 </resources>
