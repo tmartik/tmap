@@ -3,4 +3,7 @@
     <string name="offlineMapName">Offline Maps</string>
     <string name="noArchivesFound">No map archives found!</string>
     <string name="cannotOpenFile">Cannot open file!</string>
+    <string name="activitySettings">Settings</string>
+    <string name="keepScreenOn">Keep screen on</string>
+    <string name="keepScreenOnSummary"></string>
 </resources>

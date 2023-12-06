@@ -3,4 +3,7 @@
     <string name="offlineMapName">Offline-kartat</string>
     <string name="noArchivesFound">Karttatiedostoja ei löydy!</string>
     <string name="cannotOpenFile">Tiedostoa ei voi avata!</string>
+    <string name="activitySettings">Asetukset</string>
+    <string name="keepScreenOn">Pidä näyttö päällä</string>
+    <string name="keepScreenOnSummary"></string>
 </resources>

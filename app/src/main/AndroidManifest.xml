@@ -23,6 +23,12 @@
             </intent-filter>
             <meta-data android:name="prefsName" android:value="maps.offline"/>
         </activity>
+        <activity android:name=".activity.SettingsActivity"
+            android:label="@string/activitySettings"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light"
+            >
+        </activity>
     </application>
 
 </manifest>

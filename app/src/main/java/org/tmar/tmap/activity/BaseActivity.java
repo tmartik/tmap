@@ -14,7 +14,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
+
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -89,6 +92,11 @@ public class BaseActivity extends Activity {
         }
 
         mPref = getApplicationContext().getSharedPreferences(mPrefsFileName, 0);      // 0 - for private mode
+
+        applyPreferences();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);         // Show application on lock screen for quick access
         setContentView(R.layout.activity_main);
@@ -168,6 +176,9 @@ public class BaseActivity extends Activity {
         editor.putFloat("Lon", (float) mMapView.getMapCenter().getLongitude());
         editor.putFloat("Zoom", (float) mMapView.getZoomLevelDouble());
         editor.commit();
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
     @Override
@@ -235,6 +246,10 @@ public class BaseActivity extends Activity {
                 chooseFile.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 
                 startActivityForResult(chooseFile, OPENFILE_RESULT_CODE);
+                return true;
+            case R.id.openSettings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -413,5 +428,30 @@ public class BaseActivity extends Activity {
             m = p.matcher(text);
         }
         return text;
+    }
+
+    private void applyPreferences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Iterator<String> iter = preferences.getAll().keySet().iterator();
+        for (String key = iter.next(); iter.hasNext(); key = iter.next()) {
+            sharedPreferenceChangeListener.onSharedPreferenceChanged(preferences, key);
+        }
+    }
+
+    private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener = (sharedPreferences, key) -> {
+        switch (key) {
+            case "screenOn":
+                keepScreenOn(sharedPreferences.getBoolean(key, false));
+                break;
+        }
+    };
+
+    private void keepScreenOn(boolean enabled) {
+        if (enabled) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
     }
 }

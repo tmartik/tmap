@@ -15,8 +15,6 @@
     <item android:id="@+id/openFile"
         android:title="Open File" />
 
-    <!--
-    <item android:id="@+id/openMapFile"
-        android:title="Open Folder" />
-        -->
+    <item android:id="@+id/openSettings"
+        android:title="@string/activitySettings" />
 </menu>

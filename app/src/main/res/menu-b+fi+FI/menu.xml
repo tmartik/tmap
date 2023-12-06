@@ -13,4 +13,7 @@
 
     <item android:id="@+id/openFile"
         android:title="Avaa tiedosto"/>
+
+    <item android:id="@+id/openSettings"
+        android:title="@string/activitySettings" />
 </menu>
