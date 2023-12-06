@@ -6,4 +6,9 @@
     <string name="activitySettings">Asetukset</string>
     <string name="keepScreenOn">Pidä näyttö päällä</string>
     <string name="keepScreenOnSummary"></string>
+    <string name="orientation">Näytön asento</string>
+    <string name="orientationNone">Määrittämätön</string>
+    <string name="orientationPortrait">Pystyssä</string>
+    <string name="orientationLandscape">Vaakatasossa</string>
+    <string name="fullscreen">Piilota järjestelmän palkit</string>
 </resources>
