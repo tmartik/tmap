@@ -6,4 +6,8 @@
     <string name="activitySettings">Settings</string>
     <string name="keepScreenOn">Keep screen on</string>
     <string name="keepScreenOnSummary"></string>
+    <string name="orientation">Orientation</string>
+    <string name="orientationNone">Unlocked</string>
+    <string name="orientationPortrait">Portrait</string>
+    <string name="orientationLandscape">Landscape</string>
 </resources>

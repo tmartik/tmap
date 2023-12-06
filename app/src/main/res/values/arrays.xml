@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="orientations">
+        <item>@string/orientationNone</item>
+        <item>@string/orientationPortrait</item>
+        <item>@string/orientationLandscape</item>
+    </string-array>
+
+    <string-array name="orientationValues">
+        <item>-1</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+</resources>

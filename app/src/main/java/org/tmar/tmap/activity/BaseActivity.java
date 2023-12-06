@@ -444,6 +444,10 @@ public class BaseActivity extends Activity {
             case "screenOn":
                 keepScreenOn(sharedPreferences.getBoolean(key, false));
                 break;
+            case "orientation":
+                String orientation = sharedPreferences.getString(key, "-1");
+                setOrientation(Integer.parseInt(orientation));
+                break;
         }
     };
 
@@ -453,5 +457,9 @@ public class BaseActivity extends Activity {
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+    }
+
+    private void setOrientation(int orientation) {
+        setRequestedOrientation(orientation);
     }
 }

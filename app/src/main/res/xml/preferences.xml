@@ -6,4 +6,11 @@
         app:title="@string/keepScreenOn"
         app:summary="@string/keepScreenOnSummary"/>
 
+    <ListPreference
+        app:title="@string/orientation"
+        app:key="orientation"
+        app:defaultValue="-1"
+        app:entries="@array/orientations"
+        app:entryValues="@array/orientationValues" />
+
 </PreferenceScreen>
