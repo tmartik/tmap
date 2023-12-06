@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/follow"
-        android:title="Follow" />
+        android:title="@string/follow" />
     <item android:id="@+id/openMap"
-        android:title="Select layer">
+        android:title="@string/selectLayer">
         <menu>
             <item
                 android:title="Layer">
@@ -13,7 +13,7 @@
     </item>
 
     <item android:id="@+id/openFile"
-        android:title="Open File" />
+        android:title="@string/openFile" />
 
     <item android:id="@+id/openSettings"
         android:title="@string/activitySettings" />

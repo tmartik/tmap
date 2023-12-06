@@ -3,6 +3,9 @@
     <string name="offlineMapName">Offline-kartat</string>
     <string name="noArchivesFound">Karttatiedostoja ei löydy!</string>
     <string name="cannotOpenFile">Tiedostoa ei voi avata!</string>
+    <string name="follow">Seuraa</string>
+    <string name="openFile">Avaa tiedosto</string>
+    <string name="selectLayer">Valitse kartta</string>
     <string name="activitySettings">Asetukset</string>
     <string name="keepScreenOn">Pidä näyttö päällä</string>
     <string name="keepScreenOnSummary"></string>
