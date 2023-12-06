@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.WindowCompat;
@@ -359,7 +361,9 @@ public class BaseActivity extends Activity {
 
                 Polyline line = new Polyline();
                 Paint paint = line.getOutlinePaint();
-                paint.setColor(Color.RED);
+                String color = preferences.getString("trackColor", "#0000FF");
+                int c = Color.parseColor(color);
+                paint.setColor(c);
                 paint.setAlpha(255 * preferences.getInt("trackAlpha", 80) / 100);
                 paint.setStrokeWidth(preferences.getInt("trackWidth", 20));
                 line.setPoints(geoPoints);

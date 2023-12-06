@@ -34,4 +34,11 @@
         android:max="90"
         />
 
+    <ListPreference
+        app:title="@string/trackColor"
+        app:key="trackColor"
+        app:defaultValue="#0000FF"
+        app:entries="@array/colors"
+        app:entryValues="@array/colorValues" />
+
 </PreferenceScreen>
