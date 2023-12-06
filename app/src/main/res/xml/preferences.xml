@@ -1,4 +1,5 @@
 <PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
@@ -16,5 +17,21 @@
         app:defaultValue="-1"
         app:entries="@array/orientations"
         app:entryValues="@array/orientationValues" />
+
+    <SeekBarPreference
+        app:title="Track width"
+        app:key="trackWidth"
+        app:defaultValue="1"
+        app:min="1"
+        android:max="50"
+        />
+
+    <SeekBarPreference
+        app:title="Track alpha"
+        app:key="trackAlpha"
+        app:defaultValue="80"
+        app:min="10"
+        android:max="90"
+        />
 
 </PreferenceScreen>

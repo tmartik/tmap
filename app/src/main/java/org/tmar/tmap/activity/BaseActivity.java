@@ -351,6 +351,8 @@ public class BaseActivity extends Activity {
         Show GPX contents on the map.
      */
     private void drawGpx(GPX gpx) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Show routes
         HashSet<Track> tracks = gpx.getTracks();
 
@@ -370,7 +372,8 @@ public class BaseActivity extends Activity {
                 Polyline line = new Polyline();
                 Paint paint = line.getOutlinePaint();
                 paint.setColor(Color.RED);
-                paint.setAlpha(90);
+                paint.setAlpha(255 * preferences.getInt("trackAlpha", 80) / 100);
+                paint.setStrokeWidth(preferences.getInt("trackWidth", 20));
                 line.setPoints(geoPoints);
                 line.setOnClickListener((polyline, mapView, eventPos) -> {
                     Toast.makeText(mapView.getContext(), "Track: " + track.getName(), Toast.LENGTH_LONG).show();
