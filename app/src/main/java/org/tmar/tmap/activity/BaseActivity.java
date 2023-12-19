@@ -139,11 +139,6 @@ public class BaseActivity extends Activity {
         });
 
         mInfoWindow = new PoiInfoWindow(this, R.layout.bubble_layout, mMapView);
-
-        // Show open documents
-        MapApplication app = (MapApplication) getApplication();
-        List<GPX> documents = app.getOpenFiles();
-        documents.forEach(gpx -> drawGpx(gpx));
     }
 
     @Override
@@ -153,6 +148,9 @@ public class BaseActivity extends Activity {
         if(mMyLocation != null) {
             mMyLocation.enableMyLocation();
         }
+
+        // Show open documents
+        updateDocuments();
     }
 
     @Override
@@ -326,6 +324,18 @@ public class BaseActivity extends Activity {
         }
     }
 
+    protected void updateDocuments() {
+        mMapView.getOverlayManager().clear();
+
+        // Location indicator
+        if(hasPermissions(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            setupLocationIndicator();
+        }
+
+        MapApplication app = (MapApplication) getApplication();
+        List<GPX> documents = app.getOpenFiles();
+        documents.forEach(gpx -> drawGpx(gpx));
+    }
     /*
         Show GPX contents on the map.
      */
