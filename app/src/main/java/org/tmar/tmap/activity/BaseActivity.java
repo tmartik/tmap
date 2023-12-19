@@ -448,8 +448,9 @@ public class BaseActivity extends Activity {
             case "fullscreen":
                 setFullscreen(sharedPreferences.getBoolean(key, false));
                 break;
+            case "systemBrightness":
             case "brightness":
-                setScreenBrightness(sharedPreferences.getInt(key, -1));
+                setScreenBrightness(sharedPreferences.getBoolean("systemBrightness", true) ? -1 : sharedPreferences.getInt("brightness", -1));
                 break;
         }
     };

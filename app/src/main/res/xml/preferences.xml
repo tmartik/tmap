@@ -8,6 +8,19 @@
         app:summary="@string/keepScreenOnSummary"/>
 
     <SwitchPreferenceCompat
+        app:key="systemBrightness"
+        app:title="@string/systemBrightness"
+        app:summary="@string/keepScreenOnSummary"/>
+
+    <SeekBarPreference
+        app:title="@string/brightness"
+        app:key="brightness"
+        app:defaultValue="80"
+        app:min="1"
+        android:max="100"
+        />
+
+    <SwitchPreferenceCompat
         app:key="fullscreen"
         app:title="@string/fullscreen"/>
 

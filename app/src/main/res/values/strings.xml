@@ -18,4 +18,9 @@
     <string name="red">Red</string>
     <string name="green">Green</string>
     <string name="blue">Blue</string>
+    <string name="activityDocuments">Open documents</string>
+    <string name="showOpenFiles">Show open files</string>
+    <string name="closeDocument">Close document?</string>
+    <string name="brightness">Screen brightness</string>
+    <string name="systemBrightness">Let system control map brightness</string>
 </resources>
