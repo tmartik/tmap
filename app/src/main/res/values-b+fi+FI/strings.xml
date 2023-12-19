@@ -14,4 +14,15 @@
     <string name="orientationPortrait">Pystyssä</string>
     <string name="orientationLandscape">Vaakatasossa</string>
     <string name="fullscreen">Piilota järjestelmän palkit</string>
+    <string name="trackColor">Uran väri</string>
+    <string name="red">Punainen</string>
+    <string name="green">Vihreä</string>
+    <string name="blue">Sininen</string>
+    <string name="activityDocuments">Avoimet tiedostot</string>
+    <string name="showOpenFiles">Näytä avoimet tiedostot</string>
+    <string name="closeDocument">Sulje tiedosto?</string>
+    <string name="brightness">Näytön kirkkaus</string>
+    <string name="systemBrightness">Käytä järjestelmän kirkkautta</string>
+    <string name="trackOpacity">Uran läpinäkyvyys</string>
+    <string name="trackWidth">Uran leveys</string>
 </resources>

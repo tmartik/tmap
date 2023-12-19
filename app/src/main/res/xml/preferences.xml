@@ -32,7 +32,7 @@
         app:entryValues="@array/orientationValues" />
 
     <SeekBarPreference
-        app:title="Track width"
+        app:title="@string/trackWidth"
         app:key="trackWidth"
         app:defaultValue="1"
         app:min="1"
@@ -40,7 +40,7 @@
         />
 
     <SeekBarPreference
-        app:title="Track alpha"
+        app:title="@string/trackOpacity"
         app:key="trackAlpha"
         app:defaultValue="80"
         app:min="10"

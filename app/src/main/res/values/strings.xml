@@ -2,9 +2,9 @@
     <string name="app_name">TMap</string>
     <string name="offlineMapName">Offline Maps</string>
     <string name="noArchivesFound">No map archives found!</string>
-    <string name="cannotOpenFile">Cannot open file!</string>
+    <string name="cannotOpenFile">Cannot open document!</string>
     <string name="follow">Follow</string>
-    <string name="openFile">Open file</string>
+    <string name="openFile">Open document</string>
     <string name="selectLayer">Select map</string>
     <string name="activitySettings">Settings</string>
     <string name="keepScreenOn">Keep screen on</string>
@@ -19,8 +19,10 @@
     <string name="green">Green</string>
     <string name="blue">Blue</string>
     <string name="activityDocuments">Open documents</string>
-    <string name="showOpenFiles">Show open files</string>
+    <string name="showOpenFiles">Show open documents</string>
     <string name="closeDocument">Close document?</string>
     <string name="brightness">Screen brightness</string>
-    <string name="systemBrightness">Let system control map brightness</string>
+    <string name="systemBrightness">Use system brightness</string>
+    <string name="trackOpacity">Track opacity</string>
+    <string name="trackWidth">Track width</string>
 </resources>
