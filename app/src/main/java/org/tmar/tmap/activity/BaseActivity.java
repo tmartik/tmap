@@ -47,6 +47,7 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.tmar.tmap.BuildConfig;
 import org.tmar.tmap.MapApplication;
+import org.tmar.tmap.helpers.LocationOverlay;
 import org.tmar.tmap.map.LocationProvider;
 import org.tmar.tmap.view.PoiInfoWindow;
 
@@ -67,7 +68,7 @@ public class BaseActivity extends Activity {
     private IMyLocationProvider mLocationProvider = new LocationProvider(this);
 
     protected MapView mMapView;
-    private MyLocationNewOverlay mMyLocation;
+    private LocationOverlay mMyLocation;
     private MarkerInfoWindow mInfoWindow;
 
     protected SharedPreferences mPref;
@@ -139,6 +140,12 @@ public class BaseActivity extends Activity {
         });
 
         mInfoWindow = new PoiInfoWindow(this, R.layout.bubble_layout, mMapView);
+
+        mMyLocation = new LocationOverlay(mMapView);
+        mMyLocation.setListener(enabled -> {
+            MapApplication app = (MapApplication) getApplication();
+            app.setFollowEnabled(enabled);
+        } );
     }
 
     @Override
@@ -147,6 +154,11 @@ public class BaseActivity extends Activity {
         mMapView.onResume();
         if(mMyLocation != null) {
             mMyLocation.enableMyLocation();
+
+            MapApplication app = (MapApplication) getApplication();
+            if(app.followEnabled()) {
+                mMyLocation.enableFollowLocation();
+            }
         }
 
         // Show open documents
@@ -221,7 +233,7 @@ public class BaseActivity extends Activity {
         if(!hasBackKey) {
             openOptionsMenu();
         }
-    };
+    }
 
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Empty default implementation
@@ -310,10 +322,6 @@ public class BaseActivity extends Activity {
 
     protected void setupLocationIndicator() {
         mLocationProvider = new LocationProvider(this);
-
-        mMyLocation = new MyLocationNewOverlay(mMapView);
-        mMyLocation.enableMyLocation(mLocationProvider);
-        mMyLocation.enableFollowLocation();
         mMapView.getOverlayManager().add(mMyLocation);
     }
 

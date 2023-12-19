@@ -35,6 +35,7 @@ public class MapApplication extends Application {
     private final static String MapSpecFileName = "mapspec.json";       // Map archive specification filename
 
     private final List<GPX> mDocuments = new ArrayList<>();
+    private boolean mFollowLocation = true;
 
     @Override
     public void onCreate() {
@@ -228,5 +229,13 @@ public class MapApplication extends Application {
      */
     private void deleteFile(File file) {
         file.delete();
+    }
+
+    public boolean followEnabled() {
+        return mFollowLocation;
+    }
+
+    public void setFollowEnabled(boolean enabled) {
+        mFollowLocation = enabled;
     }
 }
