@@ -271,8 +271,6 @@ public class BaseActivity extends Activity {
                         GPX gpx = app.openFile(data.getData());
                         if(gpx != null) {
                             drawGpx(gpx);
-                        } else {
-                            Toast.makeText(this, getString(R.string.cannotOpenFile), Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
