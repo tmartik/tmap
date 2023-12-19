@@ -15,6 +15,9 @@
     <item android:id="@+id/openFile"
         android:title="@string/openFile" />
 
+    <item android:id="@+id/showOpenFiles"
+        android:title="@string/showOpenFiles" />
+
     <item android:id="@+id/openSettings"
         android:title="@string/activitySettings" />
 </menu>
