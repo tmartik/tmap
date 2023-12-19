@@ -448,6 +448,9 @@ public class BaseActivity extends Activity {
             case "fullscreen":
                 setFullscreen(sharedPreferences.getBoolean(key, false));
                 break;
+            case "brightness":
+                setScreenBrightness(sharedPreferences.getInt(key, -1));
+                break;
         }
     };
 
@@ -473,5 +476,12 @@ public class BaseActivity extends Activity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
         }
+    }
+
+    private void setScreenBrightness(int percentage) {
+        float brightness = percentage > 0 ? percentage / 100F : WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        layoutParams.screenBrightness = brightness;
+        getWindow().setAttributes(layoutParams);
     }
 }
