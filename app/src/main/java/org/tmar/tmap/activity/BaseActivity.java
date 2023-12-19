@@ -10,10 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.WindowCompat;
@@ -37,7 +34,6 @@ import android.widget.Toast;
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
-import org.json.JSONException;
 import org.tmar.tmap.R;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
@@ -50,21 +46,16 @@ import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.tmar.tmap.BuildConfig;
-import org.tmar.tmap.document.FileParserResolver;
+import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.map.LocationProvider;
-import org.tmar.tmap.document.IFileParser;
 import org.tmar.tmap.view.PoiInfoWindow;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /*
     An activity that implements generic map browsing functions.
@@ -148,6 +139,11 @@ public class BaseActivity extends Activity {
         });
 
         mInfoWindow = new PoiInfoWindow(this, R.layout.bubble_layout, mMapView);
+
+        // Show open documents
+        MapApplication app = (MapApplication) getApplication();
+        List<GPX> documents = app.getOpenFiles();
+        documents.forEach(gpx -> drawGpx(gpx));
     }
 
     @Override
@@ -251,6 +247,10 @@ public class BaseActivity extends Activity {
 
                 startActivityForResult(chooseFile, OPENFILE_RESULT_CODE);
                 return true;
+            case R.id.showOpenFiles:
+                Intent documentsIntent = new Intent(this, DocumentActivity.class);
+                startActivity(documentsIntent);
+                return true;
             case R.id.openSettings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
@@ -267,7 +267,8 @@ public class BaseActivity extends Activity {
                 if (resultCode == -1) {
                     try {
                         // Open file and draw contents on the map
-                        GPX gpx = openFile(data.getData());
+                        MapApplication app = (MapApplication) getApplication();
+                        GPX gpx = app.openFile(data.getData());
                         if(gpx != null) {
                             drawGpx(gpx);
                         } else {
@@ -325,16 +326,6 @@ public class BaseActivity extends Activity {
         public void onLongPress(MotionEvent e) {
             openOptionsMenu();                      // Open the options menu on a long-press
         }
-    }
-
-    /*
-        Open file for viewing on the map.
-     */
-    private GPX openFile(Uri fileUri) throws Exception {
-        // Read from file
-        FileParserResolver resolver = new FileParserResolver(this);
-        IFileParser parser = resolver.resolve(fileUri);
-        return parser != null ? parser.parse(fileUri) : null;
     }
 
     /*

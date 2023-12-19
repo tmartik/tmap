@@ -1,10 +1,19 @@
 package org.tmar.tmap;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Environment;
-import androidx.annotation.RawRes;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.annotation.RawRes;
+
+import org.alternativevision.gpx.beans.GPX;
+import org.tmar.tmap.document.FileParserResolver;
+import org.tmar.tmap.document.IFileParser;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,6 +24,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -24,11 +34,62 @@ public class MapApplication extends Application {
     private final static String TAG = "TMAP";
     private final static String MapSpecFileName = "mapspec.json";       // Map archive specification filename
 
+    private final List<GPX> mDocuments = new ArrayList<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         prepareResources();
+    }
+
+    /*
+        Open file for viewing on the map.
+     */
+    public GPX openFile(Uri fileUri) throws Exception {
+        // Read from file
+        FileParserResolver resolver = new FileParserResolver(this);
+        String filename = getFilenameFromUri(fileUri);
+        GPX document = findDocumentByName(filename);
+        if(document == null) {
+            // This document is not yet open
+            IFileParser parser = resolver.resolve(fileUri);
+            document = parser.parse(fileUri);
+            document.setCreator(filename);    // This will pass filename to UI
+            mDocuments.add(document);
+            return document;
+        } else {
+            // The document is already open
+            return null;
+        }
+    }
+
+    public List<GPX> getOpenFiles() {
+        return mDocuments;
+    }
+
+    public void closeFile(int index) {
+        mDocuments.remove(index);
+    }
+
+    private String getFilenameFromUri(Uri uri) throws IOException {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                @SuppressLint("Range")
+                String filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                return filename;
+            } else {
+                throw new IOException("Could not open cursor to Uri!");
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private GPX findDocumentByName(String filename) {
+        List<GPX> matching = mDocuments.stream().filter(gpx -> gpx.getCreator().equals(filename)).collect(Collectors.toList());
+        return matching.size() > 0 ? matching.get(0) : null;
     }
 
     /*
