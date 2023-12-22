@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="cardview_light_background">#FFFFFF</color>
+    <color name="button_normal">#55888888</color>
+    <color name="button_pressed">#88888888</color>
 </resources>

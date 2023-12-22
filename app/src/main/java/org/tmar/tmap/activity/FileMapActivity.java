@@ -44,20 +44,8 @@ public class FileMapActivity extends BaseActivity {
 
         if(permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
             openDefaultMap();
-
-            // We have the permission and we have loaded all map archives; we can open options menu now.
-            openOptionsMenu();
         }
     }
-
-    @Override
-    public void onAttachedToWindow() {
-        if(hasPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            // We have the permission; we can open options menu now.
-            openOptionsMenu();
-        }
-    }
-
 
     /*
         Prepare map archive selection menu.

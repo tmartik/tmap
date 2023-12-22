@@ -20,8 +20,6 @@ import androidx.preference.PreferenceManager;
 
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,7 +42,6 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.tmar.tmap.BuildConfig;
 import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.helpers.LocationOverlay;
@@ -146,6 +143,14 @@ public class BaseActivity extends Activity {
             MapApplication app = (MapApplication) getApplication();
             app.setFollowEnabled(enabled);
         } );
+
+        View menuButton = findViewById(R.id.menuButton);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openOptionsMenu();
+            }
+        });
     }
 
     @Override
@@ -225,14 +230,6 @@ public class BaseActivity extends Activity {
         followMenuItem.setEnabled(mMyLocation != null && !mMyLocation.isFollowLocationEnabled());
 
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-        if(!hasBackKey) {
-            openOptionsMenu();
-        }
     }
 
     protected void onPrepareLayerMenu(SubMenu subMenu) {
