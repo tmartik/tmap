@@ -3,16 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
+        android:icon="@drawable/lightbulb"
         app:key="screenOn"
         app:title="@string/keepScreenOn"
         app:summary="@string/keepScreenOnSummary"/>
 
     <SwitchPreferenceCompat
+        android:icon="@drawable/smartphone"
         app:key="systemBrightness"
         app:title="@string/systemBrightness"
         app:summary="@string/keepScreenOnSummary"/>
 
     <SeekBarPreference
+        android:icon="@drawable/settings_brightness"
         app:title="@string/brightness"
         app:key="brightness"
         app:defaultValue="80"
@@ -21,10 +24,12 @@
         />
 
     <SwitchPreferenceCompat
+        android:icon="@drawable/fullscreen"
         app:key="fullscreen"
         app:title="@string/fullscreen"/>
 
     <ListPreference
+        android:icon="@drawable/screen_lock_landscape"
         app:title="@string/orientation"
         app:key="orientation"
         app:defaultValue="-1"
@@ -32,6 +37,7 @@
         app:entryValues="@array/orientationValues" />
 
     <SeekBarPreference
+        android:icon="@drawable/width"
         app:title="@string/trackWidth"
         app:key="trackWidth"
         app:defaultValue="1"
@@ -40,6 +46,7 @@
         />
 
     <SeekBarPreference
+        android:icon="@drawable/opacity"
         app:title="@string/trackOpacity"
         app:key="trackAlpha"
         app:defaultValue="80"
@@ -48,6 +55,7 @@
         />
 
     <ListPreference
+        android:icon="@drawable/palette"
         app:title="@string/trackColor"
         app:key="trackColor"
         app:defaultValue="#0000FF"
