@@ -32,7 +32,7 @@ public class MapApplication extends Application {
     // Called when the application is starting, before any other application objects have been created.
 
     private final static String TAG = "TMAP";
-    private final static String MapSpecFileName = "mapspec.json";       // Map archive specification filename
+    private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
 
     private final List<GPX> mDocuments = new ArrayList<>();
     private boolean mFollowLocation = true;
