@@ -1,20 +1,25 @@
 package org.tmar.tmap.map.file;
 
-import org.tmar.tmap.map.ITileReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
 /*
     Tile reader implementation for reading ZXY tiles from the filesystem.
- */
-public class FileTileReader implements ITileReader
-{
-    private final String mPath;
 
-    public FileTileReader(String path) {
-        mPath = path;
+    The "files" type expects the standard ZXY folder structure.
+    Both JPG and PNG filetypes are supported.
+ */
+public class FileTileReader extends ManifestTileReader
+{
+    private static final String TYPE = "files";
+
+    public FileTileReader(String path) throws Exception {
+        super(path);
+
+        if(!mType.toLowerCase().equals(TYPE.toLowerCase())) {
+            throw new IllegalArgumentException("Wrong manifest type.");
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -21,10 +22,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -33,6 +40,8 @@ public class MapApplication extends Application {
 
     private final static String TAG = "TMAP";
     private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
+    private final static String MBTilesFileName = ".*.mbtiles";           // Map archive specification filename
+    private final static String[] mManifestFilenames = new String[]{ MapSpecFileName, MBTilesFileName };
 
     private final List<GPX> mDocuments = new ArrayList<>();
     private boolean mFollowLocation = true;
@@ -97,10 +106,36 @@ public class MapApplication extends Application {
         Find map archives from storage.
     */
     public List<File> getMapDirs() {
+        List<File> mapDirs = new ArrayList<>();
+
         List<File> searchDirs = new ArrayList<>();
         searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
         searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS));
         searchDirs.add(getFilesDir());    // Application private folder
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            for(File f : searchDirs) {
+                for (String m : mManifestFilenames) {
+                    try {
+                        Stream<Path> list = Files.find(Paths.get(f.getAbsolutePath()), Integer.MAX_VALUE, (path, basicFileAttributes) -> path.toFile().getName().matches(m));
+
+                        final Collection<String> simpleStringCollection = new ArrayList<>();
+                        list.forEach(p -> simpleStringCollection.add(p.toString()));
+
+                        Log.e(TAG, simpleStringCollection.toString());
+                        for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
+                            File mapSpecFile = new File(it.next());
+                            mapDirs.add(mapSpecFile);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+            }
+
+            searchDirs.clear(); // No need to search these directories again
+        }
 
         File[] mediaDirs = getExternalMediaDirs();
 
@@ -117,8 +152,6 @@ public class MapApplication extends Application {
         for (File f : copy) {
             searchDirs.add(new File(f.getAbsolutePath() + File.separator + "offline-maps"));
         }
-
-        List<File> mapDirs = new ArrayList<>();
 
         // Search dirs for maps
         for (File d : searchDirs) {
