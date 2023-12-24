@@ -24,9 +24,6 @@ import java.util.Set;
     This activity implements a file-based map source for offline browsing.
  */
 public class FileMapActivity extends BaseActivity {
-
-    private List<File> mMapDirs;                             // Available map archives
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +50,11 @@ public class FileMapActivity extends BaseActivity {
     @Override
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Build layer selection menu
-        if (mMapDirs != null && mMapDirs.size() > 0) {
-            int itemId = 100;
-
-            for (File m : mMapDirs) {
-                File parent = m.getParentFile();
-                String layerName = parent.getName();
-                subMenu.add(Menu.NONE, itemId++, Menu.NONE, layerName);
-            }
+        MapApplication app = (MapApplication) getApplication();
+        List<String> mapNames = app.getMapNames();
+        int itemId = 100;
+        for(String mapName : mapNames) {
+            subMenu.add(Menu.NONE, itemId++, Menu.NONE, mapName);
         }
     }
 
@@ -90,13 +84,15 @@ public class FileMapActivity extends BaseActivity {
      */
     private void openDefaultMap() {
         MapApplication app = (MapApplication) getApplication();
-        mMapDirs = app.getMapDirs();
+        app.getMapFiles();  // Reload map files
+        List<String> mapNames = app.getMapNames();
 
-        if(mMapDirs.size() > 0) {
+        if(mapNames.size() > 0) {
+            // Select the map stored in preferences or the first map if no preference set
             final String archiveName = mPref.getString("archiveName","");
-            for (int i = 0; i < mMapDirs.size(); i++) {
-                File dir = mMapDirs.get(i);
-                if(dir.getAbsolutePath().indexOf(archiveName) >= 0 || archiveName.length() == 0) {
+            for (int i = 0; i < mapNames.size(); i++) {
+                String name = mapNames.get(i);
+                if(name.equals(archiveName) || archiveName.length() == 0) {
                     selectArchive(i);
                     break;
                 }
@@ -110,7 +106,9 @@ public class FileMapActivity extends BaseActivity {
         Set map archive for viewing.
      */
     private void selectArchive(int index) {
-        File mapFile = mMapDirs.get(index);
+        MapApplication app = (MapApplication) getApplication();
+        File mapFile = app.getMapFiles().get(index);
+
         OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), mapFile);
         mMapView.setTileProvider(tileProvider);
 
@@ -121,8 +119,7 @@ public class FileMapActivity extends BaseActivity {
         ZipCache.clear();
 
         // Save to settings
-        File parent = mapFile.getParentFile();
-        String name = parent.getName();
+        String name = app.getMapNames().get(index);
         mPref.edit().putString("archiveName", name).commit();
     }
 }

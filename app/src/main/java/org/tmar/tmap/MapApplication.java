@@ -15,6 +15,8 @@ import androidx.annotation.RawRes;
 import org.alternativevision.gpx.beans.GPX;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
+import org.tmar.tmap.map.ITileReader;
+import org.tmar.tmap.map.TileReaderFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +44,8 @@ public class MapApplication extends Application {
     private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
     private final static String MBTilesFileName = ".*.mbtiles";           // Map archive specification filename
     private final static String[] mManifestFilenames = new String[]{ MapSpecFileName, MBTilesFileName };
+
+    private List<File> mMapDirs;                                           // Available map archives
 
     private final List<GPX> mDocuments = new ArrayList<>();
     private boolean mFollowLocation = true;
@@ -82,6 +86,20 @@ public class MapApplication extends Application {
         mDocuments.remove(index);
     }
 
+    public List<String> getMapNames() {
+        List<String> nameList = mMapDirs.stream().map(f -> {
+            ITileReader tileReader = TileReaderFactory.createFromManifest(f);
+            return tileReader.getName();
+        }).collect(Collectors.toList());
+
+        return nameList;
+    }
+
+    public List<File> getMapFiles() {
+        mMapDirs = getMapDirs();
+        return mMapDirs;
+    }
+
     private String getFilenameFromUri(Uri uri) throws IOException {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         try {
@@ -105,7 +123,7 @@ public class MapApplication extends Application {
     /*
         Find map archives from storage.
     */
-    public List<File> getMapDirs() {
+    private List<File> getMapDirs() {
         List<File> mapDirs = new ArrayList<>();
 
         List<File> searchDirs = new ArrayList<>();
