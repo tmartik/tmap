@@ -2,15 +2,12 @@ package org.tmar.tmap.map;
 
 import static org.osmdroid.tileprovider.tilesource.FileBasedTileSource.getSource;
 
-import android.content.Context;
-
 import org.osmdroid.tileprovider.IMapTileProviderCallback;
 import org.osmdroid.tileprovider.IRegisterReceiver;
 import org.osmdroid.tileprovider.MapTileProviderArray;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.modules.MapTileApproximater;
 import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
-import org.tmar.tmap.map.FileSystemArchive;
 
 import java.io.File;
 

@@ -1,9 +1,5 @@
 package org.tmar.tmap.map;
 
-import org.json.JSONObject;
-import org.tmar.tmap.helpers.FileHelper;
-import org.tmar.tmap.map.file.FileTileReader;
-import org.tmar.tmap.map.zip.ZipTileReader;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.util.MapTileIndex;
