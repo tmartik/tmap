@@ -2,7 +2,6 @@ package org.tmar.tmap.map.mbtiles;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.FormatException;
 
 import org.tmar.tmap.map.ITileReader;
 
@@ -17,13 +16,13 @@ public class MBTilesTileReader implements ITileReader {
     SQLiteDatabase mDatabase;
 
     private String mName;
-    public MBTilesTileReader(String path) throws FormatException {
+    public MBTilesTileReader(String path)  {
         File file = new File(path);
         String name = file.getName();
         mName = name.substring(0, name.indexOf("."));
 
         if(!name.toLowerCase().endsWith(EXTENSION)) {
-            throw new FormatException("Wrong file type.");
+            throw new IllegalArgumentException("Wrong file type.");
         }
 
         mDatabase = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
@@ -32,7 +31,7 @@ public class MBTilesTileReader implements ITileReader {
         boolean formatSupported = Arrays.stream(FORMATS).filter(f -> f.equals(format)).toArray().length > 0;
 
         if(!formatSupported) {
-            throw new FormatException("Unsupported tile format: " + format);
+            throw new IllegalArgumentException("Unsupported tile format: " + format);
         }
 
         String center = getMetadata("center");      // TODO:

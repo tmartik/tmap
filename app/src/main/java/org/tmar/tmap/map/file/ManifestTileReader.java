@@ -1,13 +1,10 @@
 package org.tmar.tmap.map.file;
 
-import android.nfc.FormatException;
-
 import org.json.JSONObject;
 import org.tmar.tmap.helpers.FileHelper;
 import org.tmar.tmap.map.ITileReader;
 
 import java.io.File;
-import java.io.InputStream;
 
 public abstract class ManifestTileReader implements ITileReader {
     protected final String mPath;
@@ -26,7 +23,7 @@ public abstract class ManifestTileReader implements ITileReader {
         mPath = mapSpec.getParent();
 
         if(!mapSpec.getName().toLowerCase().endsWith(".json")) {
-            throw new FormatException("Wrong file type.");
+            throw new IllegalArgumentException("Wrong file type.");
         }
 
         String json = FileHelper.getStringFromFile(mapSpec.getAbsolutePath());
