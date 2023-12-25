@@ -65,7 +65,7 @@ public class BaseActivity extends Activity {
     private IMyLocationProvider mLocationProvider = new LocationProvider(this);
 
     protected MapView mMapView;
-    private LocationOverlay mMyLocation;
+    protected LocationOverlay mMyLocation;
     private MarkerInfoWindow mInfoWindow;
 
     protected SharedPreferences mPref;

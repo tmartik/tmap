@@ -1,5 +1,7 @@
 package org.tmar.tmap.map;
 
+import android.location.Location;
+
 import java.io.InputStream;
 
 /*
@@ -7,6 +9,9 @@ import java.io.InputStream;
  */
 public interface ITileReader {
     public String getName();
+    public Location getDefaultLocation();
+    public int getDefaultZoom();
+
     /*
         Returns an input stream for the given map tile. The caller will close the stream.
      */

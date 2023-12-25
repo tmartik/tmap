@@ -1,5 +1,7 @@
 package org.tmar.tmap.map.file;
 
+import android.location.Location;
+
 import org.json.JSONObject;
 import org.tmar.tmap.helpers.FileHelper;
 import org.tmar.tmap.map.ITileReader;
@@ -35,5 +37,15 @@ public abstract class ManifestTileReader implements ITileReader {
     public String getName() {
         File path = new File(mPath);
         return path.getName();
+    }
+
+    @Override
+    public Location getDefaultLocation() {
+        return null;
+    }
+
+    @Override
+    public int getDefaultZoom() {
+        return 0;
     }
 }

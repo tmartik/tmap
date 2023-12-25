@@ -2,6 +2,7 @@ package org.tmar.tmap.map.mbtiles;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 
 import org.tmar.tmap.map.ITileReader;
 
@@ -33,13 +34,41 @@ public class MBTilesTileReader implements ITileReader {
         if(!formatSupported) {
             throw new IllegalArgumentException("Unsupported tile format: " + format);
         }
-
-        String center = getMetadata("center");      // TODO:
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Location getDefaultLocation() {
+        Location location = null;
+        String bounds = getMetadata("bounds");
+        if(bounds != null) {
+            String[] coordinates = bounds.split(",");
+            if(coordinates.length == 4) {
+                double left = Double.parseDouble(coordinates[0]);
+                double bottom = Double.parseDouble(coordinates[1]);
+                double right = Double.parseDouble(coordinates[2]);
+                double top = Double.parseDouble(coordinates[3]);
+
+                double lon = left + (right - left) / 2;
+                double lat = bottom + (top - bottom) / 2;
+
+                location = new Location("");
+                location.setLatitude(lat);
+                location.setLongitude(lon);
+            }
+        }
+
+        return location;
+    }
+
+    @Override
+    public int getDefaultZoom() {
+        String zoomMax = getMetadata("maxzoom");
+        return zoomMax != null ? Integer.parseInt(zoomMax) : 0;
     }
 
     @Override

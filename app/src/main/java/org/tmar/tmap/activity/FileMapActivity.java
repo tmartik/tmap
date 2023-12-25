@@ -1,18 +1,23 @@
 package org.tmar.tmap.activity;
 
 import android.Manifest;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.widget.Toast;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.util.GeoPoint;
 import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.R;
+import org.tmar.tmap.map.ITileReader;
 import org.tmar.tmap.map.OfflineTileProvider;
+import org.tmar.tmap.map.TileReaderFactory;
 import org.tmar.tmap.map.zip.ZipCache;
 
 import java.io.File;
@@ -117,6 +122,20 @@ public class FileMapActivity extends BaseActivity {
         String source = tileSources.iterator().next();
         mMapView.setTileSource(FileBasedTileSource.getSource(source));
         ZipCache.clear();
+
+        // Set default location and zoom
+        ITileReader tileReader = TileReaderFactory.createFromManifest(mapFile);
+        Location location = tileReader.getDefaultLocation();
+        if(location != null) {
+            IGeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            mMapView.getController().setCenter(geoPoint);
+            int zoom = tileReader.getDefaultZoom();
+            if(zoom > 0) {
+                mMapView.getController().setZoom((float) zoom);
+            }
+
+            mMyLocation.disableFollowLocation();
+        }
 
         // Save to settings
         String name = app.getMapNames().get(index);
