@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keepScreenOn="false"
-    tools:context=".FileMapActivity">
+    android:layout_height="match_parent">
 
     <org.osmdroid.views.MapView
         android:id="@+id/mapView"
         tilesource="Mapnik"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="334dp"></org.osmdroid.views.MapView>
+        >
 
-    <TextView
-        android:id="@+id/speedView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="5mm"
-        android:text=""
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"></TextView>
+    </org.osmdroid.views.MapView>
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/menuButton"
-        android:layout_width="8mm"
-        android:layout_height="8mm"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="5mm"
-        android:layout_marginRight="1mm"
-        android:background="@drawable/button_background"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/speedView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="1mm"
+            android:layout_gravity="left"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="5mm"
+            android:textStyle="bold"></TextView>
 
-        android:src="@drawable/more_vert" />
-</RelativeLayout>
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/menuButton"
+            android:layout_width="8mm"
+            android:layout_height="8mm"
+            android:layout_margin="1mm"
+            android:layout_gravity="right"
+            android:background="@drawable/button_background"
+            android:src="@drawable/more_vert" />
+    </FrameLayout>
+</FrameLayout>
