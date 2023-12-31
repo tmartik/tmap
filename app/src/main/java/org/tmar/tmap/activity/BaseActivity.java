@@ -221,9 +221,7 @@ public class BaseActivity extends Activity {
 
             onPrepareLayerMenu(submenu);
 
-            if (submenu.size() == 0) {
-                menu.removeItem(R.id.openMap);
-            }
+            item.setVisible(submenu.size() > 0);
         }
 
         MenuItem followMenuItem = menu.findItem(R.id.follow);
