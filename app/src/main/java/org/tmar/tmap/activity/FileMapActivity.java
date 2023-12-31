@@ -118,7 +118,7 @@ public class FileMapActivity extends BaseActivity {
      */
     private void selectArchive(int index) {
         MapApplication app = (MapApplication) getApplication();
-        MapDescriptor map = app.getMaps().get(index);
+        MapDescriptor map = app.getMaps().stream().filter(m -> m.isVisible()).collect(Collectors.toList()).get(index);
 
         OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), map.getFile());
         mMapView.setTileProvider(tileProvider);
