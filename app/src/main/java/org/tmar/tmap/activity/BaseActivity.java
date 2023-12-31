@@ -258,6 +258,10 @@ public class BaseActivity extends Activity {
                 Intent documentsIntent = new Intent(this, DocumentActivity.class);
                 startActivity(documentsIntent);
                 return true;
+            case R.id.showMaps:
+                Intent intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.openSettings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);

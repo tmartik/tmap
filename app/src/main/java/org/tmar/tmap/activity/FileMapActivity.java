@@ -14,6 +14,7 @@ import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.tmar.tmap.MapApplication;
+import org.tmar.tmap.MapDescriptor;
 import org.tmar.tmap.R;
 import org.tmar.tmap.map.ITileReader;
 import org.tmar.tmap.map.OfflineTileProvider;
@@ -23,6 +24,9 @@ import org.tmar.tmap.map.zip.ZipCache;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /*
@@ -56,10 +60,12 @@ public class FileMapActivity extends BaseActivity {
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Build layer selection menu
         MapApplication app = (MapApplication) getApplication();
-        List<String> mapNames = app.getMapNames();
+        List<MapDescriptor> maps = app.getMaps();
+        List<MapDescriptor> visibleMaps = maps.stream().filter(m -> m.isVisible()).collect(Collectors.toList());
+
         int itemId = 100;
-        for(String mapName : mapNames) {
-            subMenu.add(Menu.NONE, itemId++, Menu.NONE, mapName);
+        for(MapDescriptor map : visibleMaps) {
+            subMenu.add(Menu.NONE, itemId++, Menu.NONE, map.getName());
         }
     }
 
@@ -89,15 +95,15 @@ public class FileMapActivity extends BaseActivity {
      */
     private void openDefaultMap() {
         MapApplication app = (MapApplication) getApplication();
-        app.getMapFiles();  // Reload map files
-        List<String> mapNames = app.getMapNames();
+        app.findMaps();
+        List<MapDescriptor> maps = app.getMaps();
 
-        if(mapNames.size() > 0) {
+        if(maps.size() > 0) {
             // Select the map stored in preferences or the first map if no preference set
             final String archiveName = mPref.getString("archiveName","");
-            for (int i = 0; i < mapNames.size(); i++) {
-                String name = mapNames.get(i);
-                if(name.equals(archiveName) || archiveName.length() == 0) {
+            for (int i = 0; i < maps.size(); i++) {
+                MapDescriptor map = maps.get(i);
+                if(map.getName().equals(archiveName) || archiveName.length() == 0) {
                     selectArchive(i);
                     break;
                 }
@@ -112,9 +118,9 @@ public class FileMapActivity extends BaseActivity {
      */
     private void selectArchive(int index) {
         MapApplication app = (MapApplication) getApplication();
-        File mapFile = app.getMapFiles().get(index);
+        MapDescriptor map = app.getMaps().get(index);
 
-        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), mapFile);
+        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), map.getFile());
         mMapView.setTileProvider(tileProvider);
 
         IArchiveFile archives = tileProvider.getArchives();
@@ -124,7 +130,7 @@ public class FileMapActivity extends BaseActivity {
         ZipCache.clear();
 
         // Set default location and zoom
-        ITileReader tileReader = TileReaderFactory.createFromManifest(mapFile);
+        ITileReader tileReader = TileReaderFactory.createFromManifest(map.getFile());
         Location location = tileReader.getDefaultLocation();
         if(location != null) {
             IGeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
@@ -138,7 +144,7 @@ public class FileMapActivity extends BaseActivity {
         }
 
         // Save to settings
-        String name = app.getMapNames().get(index);
+        String name = map.getName();
         mPref.edit().putString("archiveName", name).commit();
     }
 }
