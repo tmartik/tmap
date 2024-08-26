@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mapShow"
+        android:title="@string/mapShow" />
+    <item android:id="@+id/mapHide"
+        android:title="@string/mapHide" />
+    <item android:id="@+id/mapShareStart"
+        android:title="@string/mapShareStart" />
+    <item android:id="@+id/mapShareEnd"
+        android:title="@string/mapShareEnd" />
+</menu>

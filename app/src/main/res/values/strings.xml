@@ -25,4 +25,15 @@
     <string name="systemBrightness">Use system brightness</string>
     <string name="trackOpacity">Track opacity</string>
     <string name="trackWidth">Track width</string>
+    <string name="showMaps">Show layers</string>
+    <string name="activityMaps">Map layers</string>
+    <string name="mapShow">Show</string>
+    <string name="mapHide">Hide</string>
+    <string name="mapShareStart">Start sharing</string>
+    <string name="mapShareEnd">Stop sharing</string>
+    <string name="mapDownload">Download maps</string>
+    <string name="errorNotImplemented">This feature is not yet implemented!</string>
+    <string name="mapSecondaryText">%1$s • %2$s • %3$dMB</string>
+    <string name="mapShared">Shared</string>
+    <string name="mapNotShared">Not shared</string>
 </resources>

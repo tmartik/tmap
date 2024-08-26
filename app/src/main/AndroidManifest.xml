@@ -32,6 +32,11 @@
             android:theme="@style/Theme.AppCompat.Light"
             >
         </activity>
+        <activity android:name=".activity.MapsActivity"
+            android:label="@string/activityMaps"
+            android:theme="@style/Theme.AppCompat.Light"
+            >
+        </activity>
     </application>
 
 </manifest>
