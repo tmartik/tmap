@@ -40,7 +40,7 @@ public class MapApplication extends Application {
 
     private final static String TAG = "TMAP";
     private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
-    private final static String MBTilesFileName = ".*.mbtiles";           // Map archive specification filename
+    private final static String MBTilesFileName = ".mbtiles";           // Map archive specification filename
     private final static String[] mManifestFilenames = new String[]{ MapSpecFileName, MBTilesFileName };
 
     private List<MapDescriptor> mMapDescriptors;                           // Available map archives
@@ -123,7 +123,7 @@ public class MapApplication extends Application {
             for(File f : searchDirs) {
                 for (String m : mManifestFilenames) {
                     try {
-                        Stream<Path> list = Files.find(Paths.get(f.getAbsolutePath()), Integer.MAX_VALUE, (path, basicFileAttributes) -> path.toFile().getName().matches(m));
+                        Stream<Path> list = Files.find(Paths.get(f.getAbsolutePath()), Integer.MAX_VALUE, (path, basicFileAttributes) -> path.toString().endsWith(m));
 
                         final Collection<String> simpleStringCollection = new ArrayList<>();
                         list.forEach(p -> simpleStringCollection.add(p.toString()));
