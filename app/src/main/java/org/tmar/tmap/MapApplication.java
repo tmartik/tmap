@@ -4,19 +4,20 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RawRes;
+import androidx.core.content.ContextCompat;
 
 import org.alternativevision.gpx.beans.GPX;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +43,7 @@ public class MapApplication extends Application {
     private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
     private final static String MBTilesFileName = ".mbtiles";           // Map archive specification filename
     private final static String[] mManifestFilenames = new String[]{ MapSpecFileName, MBTilesFileName };
+    private final static String[] SearchPaths = new String[] { Environment.DIRECTORY_DOCUMENTS, Environment.DIRECTORY_DOWNLOADS };
 
     private List<MapDescriptor> mMapDescriptors;                           // Available map archives
 
@@ -87,7 +89,9 @@ public class MapApplication extends Application {
 
     public List<MapDescriptor> getMaps() {
         return mMapDescriptors;
-    }    private String getFilenameFromUri(Uri uri) throws IOException {
+    }
+
+    private String getFilenameFromUri(Uri uri) throws IOException {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         try {
             if (cursor != null && cursor.moveToFirst()) {
@@ -107,6 +111,23 @@ public class MapApplication extends Application {
         return matching.size() > 0 ? matching.get(0) : null;
     }
 
+    // Get the path to the topmost 'searchFolder'
+    private File getRootPath(File path, String searchFolder) {
+        File candidate = new File(path.getAbsolutePath());
+        File parent = path;
+
+        do {
+            path = new File(parent.getAbsolutePath());
+            File searchFile = new File(parent.getAbsolutePath() + File.separator + searchFolder);
+            if(searchFile.exists() && candidate.getAbsolutePath().split("/").length > parent.getAbsolutePath().split("/").length) {
+                candidate = new File(parent.getAbsolutePath());
+            }
+            parent = parent.getParentFile();
+        } while(parent != null && path.getAbsolutePath().split("/").length > 1);
+
+        return new File(candidate.getAbsolutePath() + File.separator + searchFolder);
+    }
+
     /*
         Find map archives from storage.
     */
@@ -114,63 +135,42 @@ public class MapApplication extends Application {
         List<MapDescriptor> maps = new ArrayList<>();
 
         List<File> searchDirs = new ArrayList<>();
-        searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
-        searchDirs.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS));
-        searchDirs.add(getFilesDir());    // Application private folder
+        File[] dirs = ContextCompat.getExternalFilesDirs(this, Environment.DIRECTORY_DOCUMENTS);
 
+        for (File f : dirs) {
+            for(String p : SearchPaths) {
+                File path = getRootPath(f, p);
+                searchDirs.add(path);
+            }
+        }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            for(File f : searchDirs) {
-                for (String m : mManifestFilenames) {
-                    try {
+        for(File f : searchDirs) {
+            for (String m : mManifestFilenames) {
+                try {
+                    final Collection<String> simpleStringCollection = new ArrayList<>();
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                         Stream<Path> list = Files.find(Paths.get(f.getAbsolutePath()), Integer.MAX_VALUE, (path, basicFileAttributes) -> path.toString().endsWith(m));
-
-                        final Collection<String> simpleStringCollection = new ArrayList<>();
                         list.forEach(p -> simpleStringCollection.add(p.toString()));
-
-                        Log.e(TAG, simpleStringCollection.toString());
-                        for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
-                            File mapSpecFile = new File(it.next());
-                            String name = mapSpecFile.getName().endsWith(".json") ? mapSpecFile.getParentFile().getName() : mapSpecFile.getName().substring(0, mapSpecFile.getName().indexOf("."));
-                            maps.add(new MapDescriptor(name, mapSpecFile, true, false, false));
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, e.toString());
-                    }
-                }
-            }
-
-            searchDirs.clear(); // No need to search these directories again
-        }
-
-        File[] mediaDirs = getExternalMediaDirs();
-
-        for (File f : mediaDirs) {
-            File x = new File(f.getAbsolutePath());
-            while(x.getParentFile() != null) {
-                searchDirs.add(x);
-                x = x.getParentFile();
-            }
-        }
-
-        // Add proprietary data dirs
-        List<File> copy = new ArrayList<>(searchDirs);
-        for (File f : copy) {
-            searchDirs.add(new File(f.getAbsolutePath() + File.separator + "offline-maps"));
-        }
-
-        // Search dirs for maps
-        for (File d : searchDirs) {
-            File[] fileList = d.listFiles();
-            if(fileList != null) {
-                for (File f : fileList) {
-                    if(f.isDirectory()) {
-                        File mapSpecFile = new File(f.getAbsolutePath() + File.separator + MapSpecFileName);
-                        if(mapSpecFile.exists()) {
-                            String name = mapSpecFile.getName().endsWith(".json") ? mapSpecFile.getParentFile().getName() : mapSpecFile.getName().substring(0, mapSpecFile.getName().indexOf("."));
-                            maps.add(new MapDescriptor(name, mapSpecFile, true, false, false));
+                    } else {
+                        File[] files = f.listFiles(new FileFilter() {
+                            @Override
+                            public boolean accept(File pathname) {
+                                return pathname.getName().endsWith(m);
+                            }
+                        });
+                        for (File mf : files) {
+                            simpleStringCollection.add(mf.getAbsolutePath());
                         }
                     }
+
+                    Log.e(TAG, simpleStringCollection.toString());
+                    for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
+                        File mapSpecFile = new File(it.next());
+                        String name = mapSpecFile.getName().endsWith(".json") ? mapSpecFile.getParentFile().getName() : mapSpecFile.getName().substring(0, mapSpecFile.getName().indexOf("."));
+                        maps.add(new MapDescriptor(name, mapSpecFile, true, false, false));
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.toString());
                 }
             }
         }
