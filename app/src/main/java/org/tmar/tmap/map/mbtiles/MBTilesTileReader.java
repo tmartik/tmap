@@ -29,7 +29,8 @@ public class MBTilesTileReader implements ITileReader {
         mDatabase = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
 
         String format = getMetadata("format");
-        boolean formatSupported = Arrays.stream(FORMATS).filter(f -> f.equals(format)).toArray().length > 0;
+        Arrays.sort(FORMATS);
+        boolean formatSupported = Arrays.binarySearch(FORMATS, format) >= 0;
 
         if(!formatSupported) {
             throw new IllegalArgumentException("Unsupported tile format: " + format);

@@ -22,6 +22,7 @@ import org.tmar.tmap.map.TileReaderFactory;
 import org.tmar.tmap.map.zip.ZipCache;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -118,7 +119,13 @@ public class FileMapActivity extends BaseActivity {
      */
     private void selectArchive(int index) {
         MapApplication app = (MapApplication) getApplication();
-        MapDescriptor map = app.getMaps().stream().filter(m -> m.isVisible()).collect(Collectors.toList()).get(index);
+        List<MapDescriptor> visibleMaps = new ArrayList<>();
+        for (MapDescriptor m : app.getMaps()) {
+            if(m.isVisible()) {
+                visibleMaps.add(m);
+            }
+        }
+        MapDescriptor map = visibleMaps.get(index);
 
         OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), map.getFile());
         mMapView.setTileProvider(tileProvider);

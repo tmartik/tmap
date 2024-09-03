@@ -341,7 +341,9 @@ public class BaseActivity extends Activity {
 
         MapApplication app = (MapApplication) getApplication();
         List<GPX> documents = app.getOpenFiles();
-        documents.forEach(gpx -> drawGpx(gpx));
+        for (GPX gpx : documents) {
+            drawGpx(gpx);
+        }
     }
     /*
         Show GPX contents on the map.
