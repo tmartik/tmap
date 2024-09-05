@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -151,6 +152,12 @@ public class BaseActivity extends Activity {
                 openOptionsMenu();
             }
         });
+
+        // Open file from intent
+        Uri uri = getIntent().getData();
+        if(uri != null) {
+            openGpx(uri);
+        }
     }
 
     @Override
@@ -276,17 +283,7 @@ public class BaseActivity extends Activity {
         switch (requestCode) {
             case OPENFILE_RESULT_CODE:
                 if (resultCode == -1) {
-                    try {
-                        // Open file and draw contents on the map
-                        MapApplication app = (MapApplication) getApplication();
-                        GPX gpx = app.openFile(data.getData());
-                        if(gpx != null) {
-                            drawGpx(gpx);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-                    }
+                    openGpx(data.getData());
                 }
 
                 break;
@@ -495,5 +492,19 @@ public class BaseActivity extends Activity {
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.screenBrightness = brightness;
         getWindow().setAttributes(layoutParams);
+    }
+
+    private void openGpx(Uri uri) {
+        try {
+            // Open file and draw contents on the map
+            MapApplication app = (MapApplication) getApplication();
+            GPX gpx = app.openFile(uri);
+            if(gpx != null) {
+                drawGpx(gpx);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+        }
     }
 }

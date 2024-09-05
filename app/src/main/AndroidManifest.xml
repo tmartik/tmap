@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/octet-stream" android:host="*"  android:pathPattern=".*\\.gpx"/>
+            </intent-filter>
             <meta-data android:name="prefsName" android:value="maps.offline"/>
         </activity>
         <activity android:name=".activity.SettingsActivity"
