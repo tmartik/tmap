@@ -84,6 +84,12 @@ public class MBTilesTileReader implements ITileReader {
         return null;
     }
 
+    @Override
+    public boolean isOverlay() {
+        String type = getMetadata("type");
+        return type != null && type.equals("overlay");
+    }
+
     private String getMetadata(String name) {
         Cursor metadata = mDatabase.query("metadata", new String[] { "name", "value" }, "name = ?", new String[] { name }, null, null, null);
         if(metadata.moveToFirst()) {

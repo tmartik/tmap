@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat;
 import org.alternativevision.gpx.beans.GPX;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
+import org.tmar.tmap.map.ITileReader;
+import org.tmar.tmap.map.TileReaderFactory;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -88,7 +90,27 @@ public class MapApplication extends Application {
 
 
     public List<MapDescriptor> getMaps() {
-        return mMapDescriptors;
+        List<MapDescriptor> baseMaps = new ArrayList<>();
+
+        for (MapDescriptor md : mMapDescriptors) {
+            if(!md.isOverlay()) {
+                baseMaps.add(md);
+            }
+        }
+
+        return baseMaps;
+    }
+
+    public List<MapDescriptor> getMapOverlays() {
+        List<MapDescriptor> overlays = new ArrayList<>();
+
+        for (MapDescriptor md : mMapDescriptors) {
+            if(md.isOverlay()) {
+                overlays.add(md);
+            }
+        }
+
+        return overlays;
     }
 
     private String getFilenameFromUri(Uri uri) throws IOException {
@@ -166,8 +188,8 @@ public class MapApplication extends Application {
                     Log.e(TAG, simpleStringCollection.toString());
                     for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
                         File mapSpecFile = new File(it.next());
-                        String name = mapSpecFile.getName().endsWith(".json") ? mapSpecFile.getParentFile().getName() : mapSpecFile.getName().substring(0, mapSpecFile.getName().indexOf("."));
-                        maps.add(new MapDescriptor(name, mapSpecFile, true, false, false));
+                        ITileReader tileReader = TileReaderFactory.createFromManifest(mapSpecFile);
+                        maps.add(new MapDescriptor(tileReader.getName(), mapSpecFile, true, tileReader.isOverlay(), false));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());

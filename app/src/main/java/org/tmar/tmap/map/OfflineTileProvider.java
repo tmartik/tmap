@@ -10,6 +10,7 @@ import org.osmdroid.tileprovider.modules.MapTileApproximater;
 import org.osmdroid.tileprovider.modules.MapTileFileArchiveProvider;
 
 import java.io.File;
+import java.util.List;
 
 /*
     SEE: https://github.com/osmdroid/osmdroid/wiki/Map-Sources#creating-a-custom-tile-provider-chain
@@ -17,14 +18,16 @@ import java.io.File;
 */
 public class OfflineTileProvider extends MapTileProviderArray implements IMapTileProviderCallback {
 
-    private IArchiveFile archive;
+    private FileSystemArchive archive;
 
-    public OfflineTileProvider(final IRegisterReceiver pRegisterReceiver, File mapSpec) {
+    public OfflineTileProvider(final IRegisterReceiver pRegisterReceiver, List<File> files) {
         super(getSource("dummy"), pRegisterReceiver);
 
         try {
             archive = new FileSystemArchive();
-            archive.init(mapSpec);
+            for (File f : files) {
+                archive.add(f);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

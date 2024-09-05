@@ -36,7 +36,7 @@ public class MapsActivity extends AppCompatActivity implements MapListViewAdapte
     public void onResume() {
         super.onResume();
 
-        List<MapDescriptor> maps = mApp.getMaps();
+        List<MapDescriptor> maps = mApp.getMapOverlays();
         ListView listView = findViewById(R.id.mapsListView);
         listView.setAdapter(new MapListViewAdapter(this, maps, R.layout.map_delegate, this));
     }
@@ -67,7 +67,7 @@ public class MapsActivity extends AppCompatActivity implements MapListViewAdapte
         inflater.inflate(R.menu.maplayer_context_menu, menu);
 
         // Set menu items' visibilities
-        List<MapDescriptor> maps = mApp.getMaps();
+        List<MapDescriptor> maps = mApp.getMapOverlays();
         int position = (int) v.getTag();
         mCurrentMap = maps.get(position);
 
@@ -110,7 +110,7 @@ public class MapsActivity extends AppCompatActivity implements MapListViewAdapte
     @Override
     public void onClick(int position) {
         // Toggle map visibility
-        List<MapDescriptor> maps = mApp.getMaps();
+        List<MapDescriptor> maps = mApp.getMapOverlays();
         MapDescriptor map = maps.get(position);
         map.setVisible(!map.isVisible());
 

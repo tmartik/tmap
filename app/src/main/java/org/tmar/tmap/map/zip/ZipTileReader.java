@@ -39,6 +39,11 @@ public class ZipTileReader extends ManifestTileReader
     }
 
     @Override
+    public boolean isOverlay() {
+        return false;
+    }
+
+    @Override
     public InputStream getTile(int z, int x, int y) {
         try {
             ZipCache cache = ZipCache.instance(z);

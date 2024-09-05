@@ -47,4 +47,9 @@ public class FileTileReader extends ManifestTileReader
 
         return null;
     }
+
+    @Override
+    public boolean isOverlay() {
+        return false;
+    }
 }

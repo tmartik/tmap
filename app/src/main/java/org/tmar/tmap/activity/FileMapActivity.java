@@ -25,9 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /*
@@ -127,7 +125,16 @@ public class FileMapActivity extends BaseActivity {
         }
         MapDescriptor map = visibleMaps.get(index);
 
-        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), map.getFile());
+        List<File> mapFiles = new ArrayList<>();
+        mapFiles.add(map.getFile());		// Add base map first
+
+        for (MapDescriptor m : app.getMapOverlays()) {
+            if(m.isOverlay() && m.isVisible()) {
+                mapFiles.add(m.getFile());	// Add overlays
+            }
+        }
+
+        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), mapFiles);
         mMapView.setTileProvider(tileProvider);
 
         IArchiveFile archives = tileProvider.getArchives();

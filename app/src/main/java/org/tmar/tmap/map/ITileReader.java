@@ -11,6 +11,7 @@ public interface ITileReader {
     public String getName();
     public Location getDefaultLocation();
     public int getDefaultZoom();
+    public boolean isOverlay();
 
     /*
         Returns an input stream for the given map tile. The caller will close the stream.

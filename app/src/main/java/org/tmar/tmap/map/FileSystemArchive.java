@@ -1,14 +1,20 @@
 package org.tmar.tmap.map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+
 import org.osmdroid.tileprovider.modules.IArchiveFile;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.util.MapTileIndex;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -18,7 +24,7 @@ import java.util.Set;
  */
 public class FileSystemArchive implements IArchiveFile {
 
-    protected HashMap<String, ITileReader> mTileReaders = new HashMap<>();
+    protected List<ITileReader> mTileReaders = new ArrayList<>();
 
     public FileSystemArchive() {
         super();
@@ -26,9 +32,10 @@ public class FileSystemArchive implements IArchiveFile {
 
     @Override
     public void init(File mapSpec) throws Exception {
-        ITileReader tileReader = TileReaderFactory.createFromManifest(mapSpec);
-        String name = tileReader.getName();
-        mTileReaders.put(name, tileReader);
+        mTileReaders.clear();
+        if(mapSpec != null) {
+            add(mapSpec);
+        }
     }
 
     /*
@@ -41,26 +48,19 @@ public class FileSystemArchive implements IArchiveFile {
         int y = MapTileIndex.getY(pMapTileIndex);
         int z = MapTileIndex.getZoom(pMapTileIndex);
 
-        Set<String> layersNames = new HashSet<>(mTileReaders.keySet());
+        // Draw final map tile from multiple map sources (the basemap is the first tile reader; the rest are overlays)
+        Bitmap tileBitmap = Bitmap.createBitmap(tileSource.getTileSizePixels(), tileSource.getTileSizePixels(), Bitmap.Config.RGB_565);
 
-        String layerName = tileSource.name();
-        layersNames.remove(layerName);
-
-        ITileReader tileReader = mTileReaders.get(layerName);
-        InputStream stream = null;
-        if(tileReader != null) {
-            stream = tileReader.getTile(z, x, y);
-
-            Iterator<String> i = layersNames.iterator();
-
-            while (stream == null && i.hasNext()) {
-                // Tile was not found in requested layer; get backup tile from any other layer
-                layerName = i.next();
-                tileReader = mTileReaders.get(layerName);
-                stream = tileReader.getTile(z, x, y);
-            }
+        for (ITileReader r : mTileReaders) {
+            InputStream tileStream = r.getTile(z, x, y);
+            Bitmap t = toBitmap(tileStream);
+            blit(tileBitmap, t);
         }
 
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        tileBitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        byte[] bitmapdata = outputStream.toByteArray();
+        InputStream stream = new ByteArrayInputStream(bitmapdata);
         return stream;
     }
 
@@ -70,10 +70,26 @@ public class FileSystemArchive implements IArchiveFile {
 
     @Override
     public Set<String> getTileSources() {
-        return mTileReaders.keySet();
+        Set<String> set = new HashSet<>();
+        set.add("dummy");
+        return set;
     }
 
     @Override
     public void setIgnoreTileSource(boolean pIgnoreTileSource) {
+    }
+
+    public void add(File file) throws Exception {
+        ITileReader tileReader = TileReaderFactory.createFromManifest(file);
+        mTileReaders.add(tileReader);
+    }
+
+    private Bitmap toBitmap(InputStream stream) {
+        return BitmapFactory.decodeStream(stream);
+    }
+
+    private void blit(Bitmap targetBitmap, Bitmap sourceBitmap) {
+        Canvas canvas = new Canvas(targetBitmap);
+        canvas.drawBitmap(sourceBitmap, 0, 0, null);
     }
 }
