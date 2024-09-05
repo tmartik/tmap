@@ -247,7 +247,7 @@ public class BaseActivity extends Activity {
             case R.id.openFile:
                 // open f.ex. GPX file
                 Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                chooseFile.setType("application/octet-stream");
+                chooseFile.setType("application/*");
 
                 chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
                 chooseFile.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
