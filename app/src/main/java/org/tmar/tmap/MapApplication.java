@@ -160,9 +160,11 @@ public class MapApplication extends Application {
         File[] dirs = ContextCompat.getExternalFilesDirs(this, Environment.DIRECTORY_DOCUMENTS);
 
         for (File f : dirs) {
-            for(String p : SearchPaths) {
-                File path = getRootPath(f, p);
-                searchDirs.add(path);
+            if(f != null) {
+                for(String p : SearchPaths) {
+                    File path = getRootPath(f, p);
+                    searchDirs.add(path);
+                }
             }
         }
 

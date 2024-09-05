@@ -14,8 +14,8 @@ import org.alternativevision.gpx.beans.GPX;
 import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.R;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DocumentActivity extends AppCompatActivity {
     private AdapterView.OnItemLongClickListener mLongClickListener = (parent, view, position, id) -> {
@@ -41,7 +41,10 @@ public class DocumentActivity extends AppCompatActivity {
         // Populate listview content
         MapApplication app = (MapApplication) getApplication();
         List<GPX> documents = app.getOpenFiles();
-        List<String> documentNames = documents.stream().map(gpx -> gpx.getCreator()).collect(Collectors.toList());
+        List<String> documentNames = new ArrayList<>();
+        for (GPX gpx : documents){
+            documentNames.add(gpx.getCreator());
+        }
         mNameArray = documentNames.toArray(new String[0]);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, mNameArray);
 

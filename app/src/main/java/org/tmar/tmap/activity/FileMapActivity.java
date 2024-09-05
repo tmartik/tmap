@@ -25,7 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 
 /*
@@ -59,8 +58,7 @@ public class FileMapActivity extends BaseActivity {
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Build layer selection menu
         MapApplication app = (MapApplication) getApplication();
-        List<MapDescriptor> maps = app.getMaps();
-        List<MapDescriptor> visibleMaps = maps.stream().filter(m -> m.isVisible()).collect(Collectors.toList());
+        List<MapDescriptor> visibleMaps = app.getMaps();
 
         int itemId = 100;
         for(MapDescriptor map : visibleMaps) {
