@@ -227,6 +227,8 @@ public class BaseActivity extends Activity {
         MenuItem followMenuItem = menu.findItem(R.id.follow);
         followMenuItem.setEnabled(mMyLocation != null && !mMyLocation.isFollowLocationEnabled());
 
+        invalidateOptionsMenu();        // SEE: https://issuetracker.google.com/issues/315761686?pli=1
+
         return super.onPrepareOptionsMenu(menu);
     }
 
