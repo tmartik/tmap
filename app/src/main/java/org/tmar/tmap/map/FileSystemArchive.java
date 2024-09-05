@@ -49,12 +49,21 @@ public class FileSystemArchive implements IArchiveFile {
         int z = MapTileIndex.getZoom(pMapTileIndex);
 
         // Draw final map tile from multiple map sources (the basemap is the first tile reader; the rest are overlays)
-        Bitmap tileBitmap = Bitmap.createBitmap(tileSource.getTileSizePixels(), tileSource.getTileSizePixels(), Bitmap.Config.RGB_565);
+        Bitmap tileBitmap = null;
 
-        for (ITileReader r : mTileReaders) {
+        for(int i = 0; i < mTileReaders.size(); i++) {
+            ITileReader r = mTileReaders.get(i);
             InputStream tileStream = r.getTile(z, x, y);
-            Bitmap t = toBitmap(tileStream);
-            blit(tileBitmap, t);
+            if(tileStream == null && i == 0) {
+                return null;    // Tile not found in basemap; return empty (let's not draw overlays on a black tile)
+            } else if(tileStream != null) {
+                if(tileBitmap == null) {
+                    tileBitmap = Bitmap.createBitmap(tileSource.getTileSizePixels(), tileSource.getTileSizePixels(), Bitmap.Config.RGB_565);
+                }
+
+                Bitmap t = toBitmap(tileStream);
+                blit(tileBitmap, t);
+            }
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
