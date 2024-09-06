@@ -42,9 +42,10 @@ public class MapApplication extends Application {
     // Called when the application is starting, before any other application objects have been created.
 
     private final static String TAG = "TMAP";
-    private final static String MapSpecFileName = "manifest.json";       // Map archive specification filename
+    private final static String MapManifestFileName = "manifest.json";       // Map archive specification filename
+    private final static String MapSpecFileName = "mapspec.json";       // Map archive specification filename
     private final static String MBTilesFileName = ".mbtiles";           // Map archive specification filename
-    private final static String[] mManifestFilenames = new String[]{ MapSpecFileName, MBTilesFileName };
+    private final static String[] mManifestFilenames = new String[]{ MapManifestFileName, MapSpecFileName, MBTilesFileName };
     private final static String[] SearchPaths = new String[] { Environment.DIRECTORY_DOCUMENTS, Environment.DIRECTORY_DOWNLOADS };
 
     private List<MapDescriptor> mMapDescriptors;                           // Available map archives
