@@ -36,6 +36,8 @@ public class FileMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if(hasPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            MapApplication app = (MapApplication) getApplication();
+            app.findMaps();
             openDefaultMap();
         } else {
             requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION});
@@ -67,6 +69,11 @@ public class FileMapActivity extends BaseActivity {
     }
 
     @Override
+    protected void reloadMap() {
+        openDefaultMap();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(super.onOptionsItemSelected(item) == false) {
             final int itemId = item.getItemId();
@@ -92,7 +99,6 @@ public class FileMapActivity extends BaseActivity {
      */
     private void openDefaultMap() {
         MapApplication app = (MapApplication) getApplication();
-        app.findMaps();
         List<MapDescriptor> maps = app.getMaps();
 
         if(maps.size() > 0) {

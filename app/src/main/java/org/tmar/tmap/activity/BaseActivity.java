@@ -61,6 +61,7 @@ import java.util.regex.Pattern;
  */
 public class BaseActivity extends Activity {
     private static final int OPENFILE_RESULT_CODE = 9;
+    private static final int SHOWMAPS_RESULT_CODE = 10;
     private static final int PERMISSION_CODE = 11;
 
     private IMyLocationProvider mLocationProvider = new LocationProvider(this);
@@ -243,6 +244,10 @@ public class BaseActivity extends Activity {
         // Empty default implementation
     }
 
+    protected void reloadMap() {
+        // Empty default implementation
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -267,7 +272,7 @@ public class BaseActivity extends Activity {
                 return true;
             case R.id.showMaps:
                 Intent intent = new Intent(this, MapsActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, SHOWMAPS_RESULT_CODE);
                 return true;
             case R.id.openSettings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
@@ -287,6 +292,10 @@ public class BaseActivity extends Activity {
                 }
 
                 break;
+            case SHOWMAPS_RESULT_CODE:
+                if (resultCode == -1) {
+                    reloadMap();
+                }
         }
     }
 

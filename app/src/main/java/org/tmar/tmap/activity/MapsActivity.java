@@ -102,6 +102,11 @@ public class MapsActivity extends AppCompatActivity implements MapListViewAdapte
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
     private boolean showDownloadMapActivity() {
         Toast.makeText(this, R.string.errorNotImplemented, Toast.LENGTH_LONG).show();
         return true;
