@@ -71,13 +71,12 @@ public class MapApplication extends Application {
     public GPX openFile(Uri fileUri) throws Exception {
         // Read from file
         FileParserResolver resolver = new FileParserResolver(this);
-        String filename = getFilenameFromUri(fileUri);
-        GPX document = findDocumentByName(filename);
+        GPX document = findDocumentByUri(fileUri);
         if(document == null) {
             // This document is not yet open
             IFileParser parser = resolver.resolve(fileUri);
             document = parser.parse(fileUri);
-            document.setCreator(filename);    // This will pass filename to UI
+            document.setCreator(fileUri.toString());    // This will pass filename to UI
             mDocuments.add(document);
         }
 
@@ -132,8 +131,8 @@ public class MapApplication extends Application {
         }
     }
 
-    public GPX findDocumentByName(String filename) {
-        List<GPX> matching = mDocuments.stream().filter(gpx -> gpx.getCreator().equals(filename)).collect(Collectors.toList());
+    public GPX findDocumentByUri(Uri uri) {
+        List<GPX> matching = mDocuments.stream().filter(gpx -> gpx.getCreator().equals(uri.toString())).collect(Collectors.toList());
         return matching.size() > 0 ? matching.get(0) : null;
     }
 
@@ -305,6 +304,11 @@ public class MapApplication extends Application {
 
     public void setFollowEnabled(boolean enabled) {
         mFollowLocation = enabled;
+    }
+
+    public void handleException(Exception e) {
+        e.printStackTrace();
+        Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
     }
 
     public static RectF getDocumentBoundingBox(GPX gpx) {

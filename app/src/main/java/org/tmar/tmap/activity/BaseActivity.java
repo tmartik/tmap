@@ -64,6 +64,7 @@ import java.util.regex.Pattern;
 public class BaseActivity extends Activity {
     private static final int OPENFILE_RESULT_CODE = 9;
     private static final int SHOWMAPS_RESULT_CODE = 10;
+    private static final int SHOWDOCUMENT_RESULT_CODE = 12;
     private static final int PERMISSION_CODE = 11;
 
     private IMyLocationProvider mLocationProvider = new LocationProvider(this);
@@ -278,7 +279,7 @@ public class BaseActivity extends Activity {
                 return true;
             case R.id.showOpenFiles:
                 Intent documentsIntent = new Intent(this, DocumentActivity.class);
-                startActivity(documentsIntent);
+                startActivityForResult(documentsIntent, SHOWDOCUMENT_RESULT_CODE);
                 return true;
             case R.id.showMaps:
                 Intent intent = new Intent(this, MapsActivity.class);
@@ -297,15 +298,21 @@ public class BaseActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case OPENFILE_RESULT_CODE:
-                if (resultCode == -1) {
+                if (resultCode == RESULT_OK) {
                     openGpx(data.getData());
                 }
 
                 break;
             case SHOWMAPS_RESULT_CODE:
-                if (resultCode == -1) {
+                if (resultCode == RESULT_OK) {
                     reloadMap();
                 }
+                break;
+            case SHOWDOCUMENT_RESULT_CODE:
+                if (resultCode == RESULT_OK) {
+                    openGpx(data.getData());
+                }
+                break;
         }
     }
 
@@ -514,11 +521,11 @@ public class BaseActivity extends Activity {
     }
 
     private void openGpx(Uri uri) {
+        MapApplication app = (MapApplication) getApplication();
+        
         try {
             // Open file and draw contents on the map
-            MapApplication app = (MapApplication) getApplication();
-            String filename = app.getFilenameFromUri(uri);
-            GPX gpx = app.findDocumentByName(filename);
+            GPX gpx = app.findDocumentByUri(uri);
 
             if(gpx == null) {
                 // This file is not yet open
@@ -534,8 +541,7 @@ public class BaseActivity extends Activity {
                 mMapView.zoomToBoundingBox(box, true);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+            app.handleException(e);
         }
     }
 }
