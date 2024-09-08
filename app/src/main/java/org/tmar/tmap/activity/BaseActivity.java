@@ -10,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
+import org.osmdroid.util.BoundingBox;
 import org.tmar.tmap.R;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
@@ -515,9 +517,21 @@ public class BaseActivity extends Activity {
         try {
             // Open file and draw contents on the map
             MapApplication app = (MapApplication) getApplication();
-            GPX gpx = app.openFile(uri);
-            if(gpx != null) {
+            String filename = app.getFilenameFromUri(uri);
+            GPX gpx = app.findDocumentByName(filename);
+
+            if(gpx == null) {
+                // This file is not yet open
+                gpx = app.openFile(uri);
                 drawGpx(gpx);
+            }
+
+            // Zoom to the document
+            mMyLocation.disableFollowLocation();
+            RectF bbox = app.getDocumentBoundingBox(gpx);
+            if(bbox != null) {
+                BoundingBox box = new BoundingBox(bbox.top, bbox.right, bbox.bottom, bbox.left);
+                mMapView.zoomToBoundingBox(box, true);
             }
         } catch (Exception e) {
             e.printStackTrace();

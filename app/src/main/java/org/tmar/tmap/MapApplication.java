@@ -3,6 +3,8 @@ package org.tmar.tmap;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.database.Cursor;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.OpenableColumns;
@@ -13,6 +15,8 @@ import androidx.annotation.RawRes;
 import androidx.core.content.ContextCompat;
 
 import org.alternativevision.gpx.beans.GPX;
+import org.alternativevision.gpx.beans.Track;
+import org.alternativevision.gpx.beans.Waypoint;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
 import org.tmar.tmap.map.ITileReader;
@@ -31,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,11 +79,9 @@ public class MapApplication extends Application {
             document = parser.parse(fileUri);
             document.setCreator(filename);    // This will pass filename to UI
             mDocuments.add(document);
-            return document;
-        } else {
-            // The document is already open
-            return null;
         }
+
+        return document;
     }
 
     public List<GPX> getOpenFiles() {
@@ -114,7 +117,7 @@ public class MapApplication extends Application {
         return overlays;
     }
 
-    private String getFilenameFromUri(Uri uri) throws IOException {
+    public String getFilenameFromUri(Uri uri) throws IOException {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         try {
             if (cursor != null && cursor.moveToFirst()) {
@@ -129,7 +132,7 @@ public class MapApplication extends Application {
         }
     }
 
-    private GPX findDocumentByName(String filename) {
+    public GPX findDocumentByName(String filename) {
         List<GPX> matching = mDocuments.stream().filter(gpx -> gpx.getCreator().equals(filename)).collect(Collectors.toList());
         return matching.size() > 0 ? matching.get(0) : null;
     }
@@ -302,5 +305,57 @@ public class MapApplication extends Application {
 
     public void setFollowEnabled(boolean enabled) {
         mFollowLocation = enabled;
+    }
+
+    public static RectF getDocumentBoundingBox(GPX gpx) {
+        RectF boundingBox = null;
+
+        // Tracks
+        HashSet<Track> tracks = gpx.getTracks();
+
+        if (tracks != null) {
+            for (Track track: tracks) {
+                ArrayList<Waypoint> trackPoints = track.getTrackPoints();
+
+                for (Waypoint trackPoint : trackPoints) {
+                    PointF gp = new PointF(Double.valueOf(trackPoint.getLongitude()).floatValue(), Double.valueOf(trackPoint.getLatitude()).floatValue());
+                    boundingBox = extendBoundingBox(boundingBox, gp);
+                }
+            }
+        }
+
+        // Waypoints
+        HashSet<Waypoint> wpts = gpx.getWaypoints();
+
+        if (wpts != null) {
+            for (Waypoint wpt: wpts) {
+                PointF gp = new PointF(Double.valueOf(wpt.getLongitude()).floatValue(), Double.valueOf(wpt.getLatitude()).floatValue());
+                boundingBox = extendBoundingBox(boundingBox, gp);
+            }
+        }
+
+        return boundingBox;
+    }
+
+    private static RectF extendBoundingBox(RectF boundingBox, PointF coordinate) {
+        if(boundingBox == null) {
+            // Initialize empty bounding box with the first coordinate
+            boundingBox = new RectF(coordinate.x, coordinate.y, coordinate.x, coordinate.y);
+        }
+
+        if(coordinate.x < boundingBox.left) {
+            boundingBox.set(coordinate.x, boundingBox.top, boundingBox.right, boundingBox.bottom);
+        }
+        if(coordinate.x > boundingBox.right) {
+            boundingBox.set(boundingBox.left, boundingBox.top, coordinate.x, boundingBox.bottom);
+        }
+        if(coordinate.y > boundingBox.top) {
+            boundingBox.set(boundingBox.left, coordinate.y, boundingBox.right, boundingBox.bottom);
+        }
+        if(coordinate.y < boundingBox.bottom) {
+            boundingBox.set(boundingBox.left, boundingBox.top, boundingBox.right, coordinate.y);
+        }
+
+        return boundingBox;
     }
 }
