@@ -124,9 +124,12 @@ public class BaseActivity extends Activity {
         mMapView.getOverlays().add(mScaleBarOverlay);
 
         // Read map location from preferences
-        IGeoPoint geoPoint = new GeoPoint(mPref.getFloat("Lat", 65), mPref.getFloat("Lon", 25));
-        mMapView.getController().setCenter(geoPoint);
-        mMapView.getController().setZoom(mPref.getFloat("Zoom", 8));
+        if(getIntent().getData() == null) {
+            // Restore location only if started without params
+            IGeoPoint geoPoint = new GeoPoint(mPref.getFloat("Lat", 65), mPref.getFloat("Lon", 25));
+            mMapView.getController().setCenter(geoPoint);
+            mMapView.getController().setZoom(mPref.getFloat("Zoom", 8));
+        }
 
         mMapView.setOnTouchListener(new View.OnTouchListener() {
             private final GestureDetector mGestureDetector = new GestureDetector(BaseActivity.this, new GestureListener());
@@ -155,10 +158,15 @@ public class BaseActivity extends Activity {
         });
 
         // Open file from intent
-        Uri uri = getIntent().getData();
-        if(uri != null) {
-            openGpx(uri);
-        }
+        mMapView.addOnFirstLayoutListener(new MapView.OnFirstLayoutListener() {
+            @Override
+            public void onFirstLayout(View v, int left, int top, int right, int bottom) {
+                Uri uri = getIntent().getData();
+                if(uri != null) {
+                    openGpx(uri);
+                }
+            }
+        });
     }
 
     @Override
