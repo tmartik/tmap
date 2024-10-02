@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -147,6 +149,9 @@ public class BaseActivity extends Activity {
         mInfoWindow = new PoiInfoWindow(this, R.layout.bubble_layout, mMapView);
 
         mMyLocation = new LocationOverlay(mMapView);
+        Bitmap locationBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.location);
+        mMyLocation.setDirectionArrow(locationBitmap, locationBitmap);
+        mMyLocation.setPersonHotspot(locationBitmap.getWidth() / 2.0F - 0.5F, locationBitmap.getHeight() / 2.0F - 0.5F);    // Calculation based on: https://github.com/osmdroid/osmdroid/pull/1460/files
         mMyLocation.setListener(enabled -> {
             MapApplication app = (MapApplication) getApplication();
             app.setFollowEnabled(enabled);
