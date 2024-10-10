@@ -1,7 +1,9 @@
 package org.tmar.tmap;
 
+import android.Manifest.permission;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -114,6 +116,33 @@ public class MapApplication extends Application {
         }
 
         return overlays;
+    }
+
+    public File[] getSelectedMap(int index) {
+        List<MapDescriptor> maps = new ArrayList<>();
+
+        for (MapDescriptor md : mMapDescriptors) {
+            if(!md.isOverlay()) {
+                maps.add(md);
+            }
+        }
+
+        return new File[] { maps.get(index).getFile() };
+    }
+
+    public File[] getVisibleOverlays() {
+        List<File> maps = new ArrayList<>();
+
+        for (MapDescriptor m : mMapDescriptors) {
+            if(m.isOverlay() && m.isVisible()) {
+                maps.add(m.getFile());
+            }
+        }
+
+        File[] files = new File[maps.size()];
+        files = maps.toArray(files);
+
+        return files;
     }
 
     public String getFilenameFromUri(Uri uri) throws IOException {

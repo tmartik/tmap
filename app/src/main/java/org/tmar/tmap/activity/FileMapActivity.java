@@ -1,6 +1,7 @@
 package org.tmar.tmap.activity;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,23 +10,22 @@ import android.view.SubMenu;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.tileprovider.modules.IArchiveFile;
-import org.osmdroid.tileprovider.tilesource.FileBasedTileSource;
+import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
+import org.osmdroid.tileprovider.modules.OfflineTileProvider;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.TilesOverlay;
 import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.MapDescriptor;
 import org.tmar.tmap.R;
 import org.tmar.tmap.map.ITileReader;
-import org.tmar.tmap.map.OfflineTileProvider;
 import org.tmar.tmap.map.TileReaderFactory;
 import org.tmar.tmap.map.zip.ZipCache;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 
 /*
     This activity implements a file-based map source for offline browsing.
@@ -49,6 +49,8 @@ public class FileMapActivity extends BaseActivity {
         super.onPermissionGranted(permission);
 
         if(permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            MapApplication app = (MapApplication) getApplication();
+            app.findMaps();
             openDefaultMap();
         }
     }
@@ -121,34 +123,35 @@ public class FileMapActivity extends BaseActivity {
      */
     private void selectArchive(int index) {
         MapApplication app = (MapApplication) getApplication();
-        List<MapDescriptor> visibleMaps = new ArrayList<>();
-        for (MapDescriptor m : app.getMaps()) {
-            if(m.isVisible()) {
-                visibleMaps.add(m);
-            }
-        }
-        MapDescriptor map = visibleMaps.get(index);
+        File[] maps = app.getSelectedMap(index);
+        File[] overlays = app.getVisibleOverlays();
 
-        List<File> mapFiles = new ArrayList<>();
-        mapFiles.add(map.getFile());		// Add base map first
-
-        for (MapDescriptor m : app.getMapOverlays()) {
-            if(m.isOverlay() && m.isVisible()) {
-                mapFiles.add(m.getFile());	// Add overlays
-            }
-        }
-
-        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), mapFiles);
+        // Basemaps
+        OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), maps);
         mMapView.setTileProvider(tileProvider);
+        mMapView.setTileSource(tileProvider.getTileSource());
 
-        IArchiveFile archives = tileProvider.getArchives();
-        Set<String> tileSources = archives.getTileSources();
-        String source = tileSources.iterator().next();
-        mMapView.setTileSource(FileBasedTileSource.getSource(source));
+        // Clear tile overlays
+        for (Overlay o : new ArrayList<>(mMapView.getOverlayManager())) {
+            if(o instanceof TilesOverlay) {
+                removePermanentOverlay(o);
+            }
+        }
+
+        // Overlays
+        for (File o : overlays) {
+            MapTileProviderBase anotherTileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), new File[] { o });
+            TilesOverlay secondTilesOverlay = new TilesOverlay(anotherTileProvider, getBaseContext());
+            secondTilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
+            addPermanentOverlay(secondTilesOverlay);
+        }
+
+        File map = maps[0];
+
         ZipCache.clear();
 
         // Set default location and zoom
-        ITileReader tileReader = TileReaderFactory.createFromManifest(map.getFile());
+        ITileReader tileReader = TileReaderFactory.createFromManifest(map);
         Location location = tileReader.getDefaultLocation();
         if(location != null) {
             IGeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
@@ -163,6 +166,7 @@ public class FileMapActivity extends BaseActivity {
 
         // Save to settings
         String name = map.getName();
+        name = name.substring(0, name.lastIndexOf('.'));
         mPref.edit().putString("archiveName", name).commit();
     }
 }

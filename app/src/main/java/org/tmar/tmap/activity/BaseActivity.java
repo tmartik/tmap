@@ -37,6 +37,7 @@ import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
 import org.osmdroid.util.BoundingBox;
+import org.osmdroid.views.overlay.Overlay;
 import org.tmar.tmap.R;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
@@ -77,6 +78,7 @@ public class BaseActivity extends Activity {
 
     protected SharedPreferences mPref;
     private String mPrefsFileName;
+    private List<Overlay> mPermanentOverlays = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,17 +110,9 @@ public class BaseActivity extends Activity {
         mMapView.setMultiTouchControls(true);
         mMapView.setMinZoomLevel(5.0);
         mMapView.setMaxZoomLevel(18.0);
+        mMapView.setUseDataConnection(false);
 
-        // Overlays
-        Polyline line = new Polyline();
-        line.getPaint().setColor(Color.BLUE);
-        line.getPaint().setStrokeWidth(4);
-        line.getPaint().setStyle(Paint.Style.STROKE);
-
-        // Location indicator
-        if(hasPermissions(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            setupLocationIndicator();
-        }
+        // Add permanent overlays
 
         // Scalebar
         final DisplayMetrics dm = getResources().getDisplayMetrics();       // TODO: Scale according to DPI!
@@ -126,7 +120,7 @@ public class BaseActivity extends Activity {
         mScaleBarOverlay.setAlignBottom(true);
         mScaleBarOverlay.setLineWidth(5);
         mScaleBarOverlay.setTextSize(25);
-        mMapView.getOverlays().add(mScaleBarOverlay);
+        addPermanentOverlay(mScaleBarOverlay);
 
         // Read map location from preferences
         if(getIntent().getData() == null) {
@@ -156,6 +150,9 @@ public class BaseActivity extends Activity {
             MapApplication app = (MapApplication) getApplication();
             app.setFollowEnabled(enabled);
         } );
+
+        // Location indicator
+        setupLocationIndicator();
 
         View menuButton = findViewById(R.id.menuButton);
         menuButton.setOnClickListener(new View.OnClickListener() {
@@ -336,9 +333,7 @@ public class BaseActivity extends Activity {
     }
 
     protected void onPermissionGranted(String permission) {
-        if(permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            setupLocationIndicator();
-        }
+        setupLocationIndicator();
     }
 
     protected final boolean hasPermissions(String permission) {
@@ -350,8 +345,10 @@ public class BaseActivity extends Activity {
     }
 
     protected void setupLocationIndicator() {
-        mLocationProvider = new LocationProvider(this);
-        mMapView.getOverlayManager().add(mMyLocation);
+        if(hasPermissions(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            mLocationProvider = new LocationProvider(this);
+            addPermanentOverlay(mMyLocation);      // TODO: make sure this stays on top!
+        }
     }
 
     private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -361,13 +358,34 @@ public class BaseActivity extends Activity {
         }
     }
 
-    protected void updateDocuments() {
-        mMapView.getOverlayManager().clear();
-
-        // Location indicator
-        if(hasPermissions(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            setupLocationIndicator();
+    protected void addPermanentOverlay(Overlay overlay) {
+        if(!mMapView.getOverlayManager().contains(overlay)) {
+            mMapView.getOverlayManager().add(overlay);
         }
+
+        if(!mPermanentOverlays.contains(overlay)) {
+            mPermanentOverlays.add(overlay);
+        }
+    }
+
+    protected void removePermanentOverlay(Overlay overlay) {
+        mMapView.getOverlayManager().remove(overlay);
+        mPermanentOverlays.remove(overlay);
+    }
+
+    // Remove all non-permanent overlays (i.e. documents)
+    protected void clearDocuments() {
+        List<Overlay> overlays = new ArrayList<>(mMapView.getOverlayManager());
+
+        for (Overlay l : overlays) {
+            if(!mPermanentOverlays.contains(l)) {
+                mMapView.getOverlayManager().remove(l);
+            }
+        }
+    }
+
+    protected void updateDocuments() {
+        clearDocuments();
 
         MapApplication app = (MapApplication) getApplication();
         List<GPX> documents = app.getOpenFiles();
@@ -434,7 +452,7 @@ public class BaseActivity extends Activity {
                 marker.setTitle(wpt.getName());
                 marker.setSnippet(comment);
 
-                mMapView.getOverlays().add(marker);
+                mMapView.getOverlayManager().add(marker);
             }
         }
     }
