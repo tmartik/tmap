@@ -371,6 +371,11 @@ public class BaseActivity extends Activity {
         mPermanentOverlays.remove(overlay);
     }
 
+    protected void makeLocationIndicatorTopmost() {
+        mMapView.getOverlayManager().remove(mMyLocation);
+        mMapView.getOverlayManager().add(mMyLocation);
+    }
+
     // Remove all non-permanent overlays (i.e. documents)
     protected void clearDocuments() {
         List<Overlay> overlays = new ArrayList<>(mMapView.getOverlayManager());
@@ -389,6 +394,8 @@ public class BaseActivity extends Activity {
         for (GPX gpx : documents) {
             drawGpx(gpx);
         }
+
+        makeLocationIndicatorTopmost();
     }
     /*
         Show GPX contents on the map.
@@ -549,6 +556,8 @@ public class BaseActivity extends Activity {
                 // This file is not yet open
                 gpx = mApp.openFile(uri);
                 drawGpx(gpx);
+                
+                makeLocationIndicatorTopmost();
             }
 
             // Zoom to the document
