@@ -200,12 +200,8 @@ public class BaseActivity extends Activity {
         if(mMyLocation != null) {
             mMyLocation.disableMyLocation();
         }
-    }
 
-    @Override
-    public void onDestroy() {
         // save current location and zoom level to preferences
-        super.onDestroy();
         SharedPreferences.Editor editor = mPref.edit();
 
         // TODO: save open files: editor.putString("", "");
