@@ -21,7 +21,6 @@ import org.tmar.tmap.MapDescriptor;
 import org.tmar.tmap.R;
 import org.tmar.tmap.map.ITileReader;
 import org.tmar.tmap.map.TileReaderFactory;
-import org.tmar.tmap.map.zip.ZipCache;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,8 +146,6 @@ public class FileMapActivity extends BaseActivity {
         }
 
         File map = maps[0];
-
-        ZipCache.clear();
 
         // Set default location and zoom
         ITileReader tileReader = TileReaderFactory.createFromManifest(map);
