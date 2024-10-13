@@ -129,9 +129,9 @@ public class BaseActivity extends Activity {
         // Read map location from preferences
         if(getIntent().getData() == null) {
             // Restore location only if started without params
-            IGeoPoint geoPoint = new GeoPoint(mPref.getFloat("Lat", 65), mPref.getFloat("Lon", 25));
+            IGeoPoint geoPoint = new GeoPoint(mPref.getFloat("Lat", 60), mPref.getFloat("Lon", 5));
             mMapView.getController().setCenter(geoPoint);
-            mMapView.getController().setZoom(mPref.getFloat("Zoom", 8));
+            mMapView.getController().setZoom(mPref.getFloat("Zoom", 5));
         }
 
         mMapView.setOnTouchListener(new View.OnTouchListener() {
