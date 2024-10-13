@@ -2,7 +2,6 @@ package org.tmar.tmap.activity;
 
 import android.Manifest;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,14 +12,11 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.tmar.tmap.MapApplication;
 import org.tmar.tmap.MapDescriptor;
 import org.tmar.tmap.R;
-import org.tmar.tmap.map.ITileReader;
-import org.tmar.tmap.map.TileReaderFactory;
 
 import java.io.File;
 import java.util.ArrayList;
