@@ -25,4 +25,5 @@
     <string name="systemBrightness">Käytä järjestelmän kirkkautta</string>
     <string name="trackOpacity">Uran läpinäkyvyys</string>
     <string name="trackWidth">Uran leveys</string>
+    <string name="cannotZoomToMap">Karttatiedostosta puuttuu koordinaatteja.</string>
 </resources>

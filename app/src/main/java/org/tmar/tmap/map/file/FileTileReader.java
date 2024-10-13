@@ -1,5 +1,7 @@
 package org.tmar.tmap.map.file;
 
+import org.osmdroid.util.BoundingBox;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -45,6 +47,11 @@ public class FileTileReader extends ManifestTileReader
             // Ignore
         }
 
+        return null;
+    }
+
+    @Override
+    public BoundingBox getExtents() {
         return null;
     }
 

@@ -47,6 +47,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+
 public class MapApplication extends Application {
     // Called when the application is starting, before any other application objects have been created.
 
@@ -232,7 +233,14 @@ public class MapApplication extends Application {
 
                         ITileReader tileReader = TileReaderFactory.createFromManifest(mapSpecFile);
                         Location location = tileReader.getDefaultLocation();
-                        maps.add(new MapDescriptor(tileReader.getName(), mapSpecFile, true, tileReader.isOverlay(), false, location != null ? new GeoPoint(location.getLatitude(), location.getLongitude()) : null, tileReader.getDefaultZoom()));
+                        maps.add(new MapDescriptor(tileReader.getName(),
+                                mapSpecFile,
+                                true,
+                                tileReader.isOverlay(),
+                                false,
+                                location != null ? new GeoPoint(location.getLatitude(), location.getLongitude()) : null,
+                                tileReader.getDefaultZoom(),
+                                tileReader.getExtents()));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());

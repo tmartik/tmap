@@ -2,6 +2,8 @@ package org.tmar.tmap.map;
 
 import android.location.Location;
 
+import org.osmdroid.util.BoundingBox;
+
 import java.io.InputStream;
 
 /*
@@ -17,4 +19,6 @@ public interface ITileReader {
         Returns an input stream for the given map tile. The caller will close the stream.
      */
     public InputStream getTile(int z, int x, int y);
+
+    BoundingBox getExtents();
 }

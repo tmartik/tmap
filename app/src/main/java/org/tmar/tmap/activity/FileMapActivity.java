@@ -12,6 +12,7 @@ import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.tileprovider.modules.OfflineTileProvider;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.tmar.tmap.MapApplication;
@@ -83,14 +84,31 @@ public class FileMapActivity extends BaseActivity {
                         // Set default location and zoom
                         MapDescriptor map = mApp.getSelectedMapDescriptor(selectedIndex);
                         IGeoPoint location = map.getCenter();
-                        if(location != null) {
-                            mMapView.getController().setCenter(location);
-                            if (map.getDefaultZoom() > 0) {
-                                mMapView.getController().setZoom((float) map.getDefaultZoom());
-                            }
+                        BoundingBox extents = map.getBoundingBox();
+
+                        if(extents != null) {
+                            // We have a bounding box; zoom to show the map area
+                            // TODO: consider using addOnFirstLayoutListener()
+                            final android.os.Handler handler = new android.os.Handler(getMainLooper());
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMapView.zoomToBoundingBox(extents, true);
+                                }
+                            }, 500);
 
                             mMyLocation.disableFollowLocation();
+                        } else if(location != null) {
+                            // We don't have a bounding box but we have a location; zoom to the location
+                            mMapView.getController().setCenter(location);
+                            mMapView.getController().setZoom((double) map.getDefaultZoom());
+                            mMyLocation.disableFollowLocation();
+                        } else {
+                            // The map did not provide have any location data
+                            Toast.makeText(this, getString(R.string.cannotZoomToMap), Toast.LENGTH_LONG).show();
                         }
+
+                        closeOptionsMenu();
 
                         return true;
                     } else {

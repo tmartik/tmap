@@ -3,7 +3,10 @@ package org.tmar.tmap.map.mbtiles;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.util.Log;
 
+import org.osmdroid.util.BoundingBox;
+import org.tmar.tmap.Constants;
 import org.tmar.tmap.map.ITileReader;
 
 import java.io.ByteArrayInputStream;
@@ -82,6 +85,19 @@ public class MBTilesTileReader implements ITileReader {
         }
 
         return null;
+    }
+
+    @Override
+    public BoundingBox getExtents() {
+        String bounds = getMetadata("bounds");
+        String[] extents = bounds.split(",");
+
+        try {
+            return new BoundingBox(Double.parseDouble(extents[3]), Double.parseDouble(extents[2]), Double.parseDouble(extents[1]), Double.parseDouble(extents[0]));
+        } catch (NumberFormatException e) {
+            Log.e(Constants.TAG, "Error while parsing map extents: File: "  + mDatabase.getPath() + " - Error: " +  e.toString());
+            return null;
+        }
     }
 
     @Override
