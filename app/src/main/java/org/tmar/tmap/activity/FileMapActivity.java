@@ -31,8 +31,7 @@ public class FileMapActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if(hasPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            MapApplication app = (MapApplication) getApplication();
-            app.findMaps();
+            mApp.findMaps();
             openDefaultMap();
         } else {
             requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION});
@@ -44,8 +43,7 @@ public class FileMapActivity extends BaseActivity {
         super.onPermissionGranted(permission);
 
         if(permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            MapApplication app = (MapApplication) getApplication();
-            app.findMaps();
+            mApp.findMaps();
             openDefaultMap();
         }
     }
@@ -56,8 +54,7 @@ public class FileMapActivity extends BaseActivity {
     @Override
     protected void onPrepareLayerMenu(SubMenu subMenu) {
         // Build layer selection menu
-        MapApplication app = (MapApplication) getApplication();
-        List<MapDescriptor> visibleMaps = app.getMaps();
+        List<MapDescriptor> visibleMaps = mApp.getMaps();
 
         int itemId = 100;
         for(MapDescriptor map : visibleMaps) {
@@ -84,8 +81,7 @@ public class FileMapActivity extends BaseActivity {
                         saveSelectedMapIndex(selectedIndex);
 
                         // Set default location and zoom
-                        MapApplication app = (MapApplication) getApplication();
-                        MapDescriptor map = app.getSelectedMapDescriptor(selectedIndex);
+                        MapDescriptor map = mApp.getSelectedMapDescriptor(selectedIndex);
                         IGeoPoint location = map.getCenter();
                         if(location != null) {
                             mMapView.getController().setCenter(location);
@@ -110,8 +106,7 @@ public class FileMapActivity extends BaseActivity {
         Determine the map archive to open for viewing.
      */
     private void openDefaultMap() {
-        MapApplication app = (MapApplication) getApplication();
-        List<MapDescriptor> maps = app.getMaps();
+        List<MapDescriptor> maps = mApp.getMaps();
 
         if(maps.size() > 0) {
             // Select the map stored in preferences or the first map if no preference set
@@ -132,9 +127,8 @@ public class FileMapActivity extends BaseActivity {
         Set map archive for viewing.
      */
     private void selectArchive(int index) {
-        MapApplication app = (MapApplication) getApplication();
-        File[] maps = app.getSelectedMap(index);
-        File[] overlays = app.getVisibleOverlays();
+        File[] maps = mApp.getSelectedMap(index);
+        File[] overlays = mApp.getVisibleOverlays();
 
         // Basemaps
         OfflineTileProvider tileProvider = new OfflineTileProvider(new SimpleRegisterReceiver(this), maps);
@@ -158,8 +152,7 @@ public class FileMapActivity extends BaseActivity {
     }
 
     private void saveSelectedMapIndex(int index) {
-        MapApplication app = (MapApplication) getApplication();
-        File[] maps = app.getSelectedMap(index);
+        File[] maps = mApp.getSelectedMap(index);
 
         String name = maps[0].getName();
         name = name.substring(0, name.lastIndexOf('.'));

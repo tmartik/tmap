@@ -70,6 +70,8 @@ public class BaseActivity extends Activity {
     private static final int SHOWDOCUMENT_RESULT_CODE = 12;
     private static final int PERMISSION_CODE = 11;
 
+    protected MapApplication mApp;
+
     private IMyLocationProvider mLocationProvider = new LocationProvider(this);
 
     protected MapView mMapView;
@@ -83,6 +85,8 @@ public class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mApp = (MapApplication) getApplication();
 
         try {
             // Get preference file name for current activity from activity metadata (see the manifest)
@@ -147,8 +151,7 @@ public class BaseActivity extends Activity {
         mMyLocation.setDirectionArrow(locationBitmap, locationBitmap);
         mMyLocation.setPersonHotspot(locationBitmap.getWidth() / 2.0F - 0.5F, locationBitmap.getHeight() / 2.0F - 0.5F);    // Calculation based on: https://github.com/osmdroid/osmdroid/pull/1460/files
         mMyLocation.setListener(enabled -> {
-            MapApplication app = (MapApplication) getApplication();
-            app.setFollowEnabled(enabled);
+            mApp.setFollowEnabled(enabled);
         } );
 
         // Location indicator
@@ -181,8 +184,7 @@ public class BaseActivity extends Activity {
         if(mMyLocation != null) {
             mMyLocation.enableMyLocation();
 
-            MapApplication app = (MapApplication) getApplication();
-            if(app.followEnabled()) {
+            if(mApp.followEnabled()) {
                 mMyLocation.enableFollowLocation();
             }
         }
@@ -387,8 +389,7 @@ public class BaseActivity extends Activity {
     protected void updateDocuments() {
         clearDocuments();
 
-        MapApplication app = (MapApplication) getApplication();
-        List<GPX> documents = app.getOpenFiles();
+        List<GPX> documents = mApp.getOpenFiles();
         for (GPX gpx : documents) {
             drawGpx(gpx);
         }
@@ -544,27 +545,25 @@ public class BaseActivity extends Activity {
     }
 
     private void openGpx(Uri uri) {
-        MapApplication app = (MapApplication) getApplication();
-        
         try {
             // Open file and draw contents on the map
-            GPX gpx = app.findDocumentByUri(uri);
+            GPX gpx = mApp.findDocumentByUri(uri);
 
             if(gpx == null) {
                 // This file is not yet open
-                gpx = app.openFile(uri);
+                gpx = mApp.openFile(uri);
                 drawGpx(gpx);
             }
 
             // Zoom to the document
             mMyLocation.disableFollowLocation();
-            RectF bbox = app.getDocumentBoundingBox(gpx);
+            RectF bbox = mApp.getDocumentBoundingBox(gpx);
             if(bbox != null) {
                 BoundingBox box = new BoundingBox(bbox.top, bbox.right, bbox.bottom, bbox.left);
                 mMapView.zoomToBoundingBox(box, true);
             }
         } catch (Exception e) {
-            app.handleException(e);
+            mApp.handleException(e);
         }
     }
 }
