@@ -1,5 +1,7 @@
 package org.tmar.tmap;
 
+import org.osmdroid.api.IGeoPoint;
+
 import java.io.File;
 
 public class MapDescriptor {
@@ -8,14 +10,18 @@ public class MapDescriptor {
     private boolean mVisible;
     private boolean mOverlay;
     private boolean mShared;
+    private IGeoPoint mCenter;
+    private int mDefaultZoom;
 
-    MapDescriptor(String name, File file, boolean visible, boolean overlay, boolean shared) {
+    MapDescriptor(String name, File file, boolean visible, boolean overlay, boolean shared, IGeoPoint center, int defaultZoom) {
         mName = name;
         mFile = file;
         mVisible = visible;
         mOverlay = overlay;
 
         mShared = shared;
+        mCenter = center;
+        mDefaultZoom = defaultZoom;
     }
 
     public File getFile() {
@@ -48,5 +54,13 @@ public class MapDescriptor {
 
     public boolean isOverlay() {
         return mOverlay;
+    }
+
+    public IGeoPoint getCenter() {
+        return mCenter;
+    }
+
+    public int getDefaultZoom() {
+        return mDefaultZoom;
     }
 }

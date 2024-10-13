@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.OpenableColumns;
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
+import org.osmdroid.util.GeoPoint;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
 import org.tmar.tmap.map.ITileReader;
@@ -130,6 +132,11 @@ public class MapApplication extends Application {
         return new File[] { maps.get(index).getFile() };
     }
 
+    public MapDescriptor getSelectedMapDescriptor(int index) {
+        List<MapDescriptor> maps = getMaps();
+        return maps.get(index);
+    }
+
     public File[] getVisibleOverlays() {
         List<File> maps = new ArrayList<>();
 
@@ -222,8 +229,10 @@ public class MapApplication extends Application {
                     Log.e(TAG, simpleStringCollection.toString());
                     for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
                         File mapSpecFile = new File(it.next());
+
                         ITileReader tileReader = TileReaderFactory.createFromManifest(mapSpecFile);
-                        maps.add(new MapDescriptor(tileReader.getName(), mapSpecFile, true, tileReader.isOverlay(), false));
+                        Location location = tileReader.getDefaultLocation();
+                        maps.add(new MapDescriptor(tileReader.getName(), mapSpecFile, true, tileReader.isOverlay(), false, location != null ? new GeoPoint(location.getLatitude(), location.getLongitude()) : null, tileReader.getDefaultZoom()));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.toString());

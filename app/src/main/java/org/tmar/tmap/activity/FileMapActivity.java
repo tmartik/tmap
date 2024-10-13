@@ -85,6 +85,21 @@ public class FileMapActivity extends BaseActivity {
                     if(itemId >= 100) {
                         int selectedIndex = itemId - 100;
                         selectArchive(selectedIndex);
+                        saveSelectedMapIndex(selectedIndex);
+
+                        // Set default location and zoom
+                        MapApplication app = (MapApplication) getApplication();
+                        MapDescriptor map = app.getSelectedMapDescriptor(selectedIndex);
+                        IGeoPoint location = map.getCenter();
+                        if(location != null) {
+                            mMapView.getController().setCenter(location);
+                            if (map.getDefaultZoom() > 0) {
+                                mMapView.getController().setZoom((float) map.getDefaultZoom());
+                            }
+
+                            mMyLocation.disableFollowLocation();
+                        }
+
                         return true;
                     } else {
                         return false;
@@ -144,25 +159,13 @@ public class FileMapActivity extends BaseActivity {
             secondTilesOverlay.setLoadingBackgroundColor(Color.TRANSPARENT);
             addPermanentOverlay(secondTilesOverlay);
         }
+    }
 
-        File map = maps[0];
+    private void saveSelectedMapIndex(int index) {
+        MapApplication app = (MapApplication) getApplication();
+        File[] maps = app.getSelectedMap(index);
 
-        // Set default location and zoom
-        ITileReader tileReader = TileReaderFactory.createFromManifest(map);
-        Location location = tileReader.getDefaultLocation();
-        if(location != null) {
-            IGeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-            mMapView.getController().setCenter(geoPoint);
-            int zoom = tileReader.getDefaultZoom();
-            if(zoom > 0) {
-                mMapView.getController().setZoom((float) zoom);
-            }
-
-            mMyLocation.disableFollowLocation();
-        }
-
-        // Save to settings
-        String name = map.getName();
+        String name = maps[0].getName();
         name = name.substring(0, name.lastIndexOf('.'));
         mPref.edit().putString("archiveName", name).commit();
     }
