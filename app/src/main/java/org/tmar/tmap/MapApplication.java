@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import org.alternativevision.gpx.beans.GPX;
 import org.alternativevision.gpx.beans.Track;
 import org.alternativevision.gpx.beans.Waypoint;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.tmar.tmap.document.FileParserResolver;
 import org.tmar.tmap.document.IFileParser;
@@ -66,6 +67,9 @@ public class MapApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Increase Osmdroid tile queue size
+        Configuration.getInstance().setTileFileSystemMaxQueueSize((short) 80);
 
         prepareResources();
     }
