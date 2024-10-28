@@ -120,6 +120,8 @@ public class MapsActivity extends AppCompatActivity implements MapListViewAdapte
         map.setVisible(!map.isVisible());
 
         notifyDataSetChanged();
+
+        mApp.savePrefs();
     }
 
     /*

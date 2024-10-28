@@ -1,9 +1,8 @@
 package org.tmar.tmap;
 
-import android.Manifest.permission;
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -43,6 +42,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -59,6 +59,10 @@ public class MapApplication extends Application {
     private final static String[] mManifestFilenames = new String[]{ MapManifestFileName, MapSpecFileName, MBTilesFileName };
     private final static String[] SearchPaths = new String[] { Environment.DIRECTORY_DOCUMENTS, Environment.DIRECTORY_DOWNLOADS };
 
+    private final static String PrefVisibleLayers = "visibleLayers";
+
+    private SharedPreferences mPref;
+
     private List<MapDescriptor> mMapDescriptors;                           // Available map archives
 
     private final List<GPX> mDocuments = new ArrayList<>();
@@ -67,6 +71,8 @@ public class MapApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mPref = getApplicationContext().getSharedPreferences(getPackageName(), MODE_PRIVATE);
 
         // Increase Osmdroid tile queue size
         Configuration.getInstance().setTileFileSystemMaxQueueSize((short) 80);
@@ -232,6 +238,9 @@ public class MapApplication extends Application {
                     }
 
                     Log.e(TAG, simpleStringCollection.toString());
+
+                    final Set<String> visibleOverlayPaths = mPref.getStringSet(PrefVisibleLayers, new HashSet<>());
+
                     for (Iterator<String> it = simpleStringCollection.iterator(); it.hasNext(); ) {
                         File mapSpecFile = new File(it.next());
 
@@ -239,7 +248,7 @@ public class MapApplication extends Application {
                         Location location = tileReader.getDefaultLocation();
                         maps.add(new MapDescriptor(tileReader.getName(),
                                 mapSpecFile,
-                                true,
+                                visibleOverlayPaths.contains(mapSpecFile.getAbsolutePath()),
                                 tileReader.isOverlay(),
                                 false,
                                 location != null ? new GeoPoint(location.getLatitude(), location.getLongitude()) : null,
@@ -411,5 +420,16 @@ public class MapApplication extends Application {
         }
 
         return boundingBox;
+    }
+
+    public void savePrefs() {
+        Set<String> pathSet = new HashSet<>();
+        List<MapDescriptor> overlays = getMapOverlays();
+        for (MapDescriptor o : overlays) {
+            if(o.isVisible()) {
+                pathSet.add(o.getFile().getAbsolutePath());
+            }
+        }
+        mPref.edit().putStringSet(PrefVisibleLayers, pathSet).commit();
     }
 }
