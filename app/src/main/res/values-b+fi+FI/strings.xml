@@ -25,5 +25,16 @@
     <string name="systemBrightness">Käytä järjestelmän kirkkautta</string>
     <string name="trackOpacity">Uran läpinäkyvyys</string>
     <string name="trackWidth">Uran leveys</string>
+    <string name="showMaps">Karttatasot</string>
+    <string name="activityMaps">Karttatasot</string>
+    <string name="mapShow">Näytä</string>
+    <string name="mapHide">Piilota</string>
+    <string name="mapShareStart">Aloita jakaminen</string>
+    <string name="mapShareEnd">Lopeta jakaminen</string>
+    <string name="mapDownload">Lataa karttoja</string>
+    <string name="errorNotImplemented">Toimintoa ei vielä ole!</string>
+    <string name="mapSecondaryText">%1$s • %2$s • %3$dMB</string>
+    <string name="mapShared">Jaetaan</string>
+    <string name="mapNotShared">Ei jaeta</string>
     <string name="cannotZoomToMap">Karttatiedostosta puuttuu koordinaatteja.</string>
 </resources>
